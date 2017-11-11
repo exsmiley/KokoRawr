@@ -1,5 +1,6 @@
 const lib = require('lib')({token: process.env.STDLIB_TOKEN});
 
+let count = 0;
 /**
 * /hello
 *
@@ -17,10 +18,10 @@ const lib = require('lib')({token: process.env.STDLIB_TOKEN});
 * @returns {object}
 */
 module.exports = (user, channel, text = '', command = {}, botToken = null, callback) => {
-
+  count += 1;
   callback(null, {
     response_type: 'in_channel',
-    text: `Hello, <@${user}>...\nYou said: ${text}`
+    text: `Hello, <@${user}>...\nYou said: ${text}` + count
   });
 
 };
