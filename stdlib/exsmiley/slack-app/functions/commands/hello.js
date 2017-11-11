@@ -1,6 +1,5 @@
 const lib = require('lib')({token: process.env.STDLIB_TOKEN});
 
-let count = 0;
 /**
 * /hello
 *
@@ -18,10 +17,26 @@ let count = 0;
 * @returns {object}
 */
 module.exports = (user, channel, text = '', command = {}, botToken = null, callback) => {
-  count += 1;
-  callback(null, {
-    response_type: 'in_channel',
-    text: `Hello, <@${user}>...\nYou said: ${text}` + count
+  lib.exsmiley.teammaker['@dev']({name: user}, function (err, result) {
+
+    if (err) {
+      // handle it
+      callback(err, null);
+    }
+
+    let color = 'Red';
+    if(result != 0) {
+      color = 'Blue';
+    }
+
+    // do something with result
+    callback(null, {
+      response_type: 'in_channel',
+      text: `Hello, <@${user}>! You are on the ${color} team!...\nYou said: ${text}`
+    });
+
   });
+
+  
 
 };
