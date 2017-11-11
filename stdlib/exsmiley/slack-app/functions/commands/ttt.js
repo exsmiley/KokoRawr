@@ -22,7 +22,7 @@ module.exports = (user, channel, text = '', command = {}, botToken = null, callb
       // handle it
       callback(err, {
           response_type: 'in_channel',
-          text: 'location out of bounds (0->8) or invalid command (location number or "reset")!'
+          text: 'location out of bounds (1->9 valid) or invalid command (location number or "reset")!'
         });
     }
 
@@ -39,24 +39,24 @@ module.exports = (user, channel, text = '', command = {}, botToken = null, callb
           response_type: 'in_channel',
           text: '(Tic Tac Toe) ' + result['text']
         });
-      }
-      console.log(result)
-      let text = result['text'];
-
-      if(text.includes('|')) {
-        let color = 'Red';
-        if(team != 0) {
-          color = 'Blue';
-        }
-        text = `(Tic Tac Toe) <@${user}>:${color}` + text;
       } else {
-        text = '(Tic Tac Toe) ' + text;
-      }
+        let text = result['text'];
 
-      callback(null, {
-        response_type: 'in_channel',
-        text: text
-      });
+        if(text.includes('|')) {
+          let color = 'Red';
+          if(team != 0) {
+            color = 'Blue';
+          }
+          text = `(Tic Tac Toe) <@${user}>:${color}` + text;
+        } else {
+          text = '(Tic Tac Toe) ' + text;
+        }
+
+        callback(null, {
+          response_type: 'in_channel',
+          text: text
+        });
+      }
     });
     
 
