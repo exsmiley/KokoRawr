@@ -28,7 +28,7 @@ module.exports = (user, channel, text = '', command = {}, botToken = null, callb
     // do something with result
     callback(null, {
       response_type: 'in_channel',
-      text: `${user} is on the ${color} team!`
+      text: `<@${user}> is on the ${color} team!`
     });
 
   });
