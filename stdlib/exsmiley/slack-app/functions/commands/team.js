@@ -1,13 +1,9 @@
 const lib = require('lib')({token: process.env.STDLIB_TOKEN});
 
 /**
-* /hello
+* /team
 *
-*   Basic "Hello World" command.
-*   All Commands use this template, simply create additional files with
-*   different names to add commands.
-*
-*   See https://api.slack.com/slash-commands for more details.
+*   Tells the user what time he/she is on.
 *
 * @param {string} user The user id of the user that invoked this command (name is usable as well)
 * @param {string} channel The channel id the command was executed in (name is usable as well)
@@ -32,11 +28,9 @@ module.exports = (user, channel, text = '', command = {}, botToken = null, callb
     // do something with result
     callback(null, {
       response_type: 'in_channel',
-      text: `Hello, <@${user}>! You are on the ${color} team!...\nYou said: ${text}`
+      text: `${user} is on the ${color} team!`
     });
 
   });
-
-  
 
 };
