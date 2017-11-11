@@ -1,3 +1,4 @@
+const lib = require('lib')({token: process.env.STDLIB_TOKEN});
 let marked = ['~', '~', '~', '~', '~', '~', '~', '~', '~'];
 let gameOver = false;
 let lastTeam = Math.round(Math.random());
@@ -88,6 +89,8 @@ module.exports = (team, loc, reset=false, context, callback) => {
 	    	text += 'Tie game!'
 	    }
 
-		callback(null, {text: text, success: true});
+	    lib.exsmiley.tracker['@dev']({post: true, store: {'name': 'ttt', 'info': marked}}, function (err, result) {
+			callback(null, {text: text, success: true});
+		});
 	}
 };
