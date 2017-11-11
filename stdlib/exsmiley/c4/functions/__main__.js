@@ -1,3 +1,5 @@
+const lib = require('lib')({token: process.env.STDLIB_TOKEN});
+
 // initialize the board
 let numCols = 7;
 let numRows = 6;
@@ -114,7 +116,9 @@ module.exports = (team=0, location=0, reset=false, context, callback) => {
     json['success'] = true;
     resetBoard()
     json['text'] = 'Successfully reset the game!\n' + boardToText(board)
-    callback(null, json);
+    lib.exsmiley.tracker['@dev']({post: true, store: {'name': 'c4', 'info': board}}, function (err, result) {
+      callback(null, json);
+    });
   } else if(reset) {
     json['success'] = false;
     json['text'] = 'The game cannot be reset: it is not over!\n' + boardToText(board)
@@ -152,8 +156,9 @@ module.exports = (team=0, location=0, reset=false, context, callback) => {
       json['text'] += "\nIt's a tie!";
       gameOver = true;
     }
-
-    callback(null, json);
+    lib.exsmiley.tracker['@dev']({post: true, store: {'name': 'c4', 'info': board}}, function (err, result) {
+      callback(null, json);
+    });
   }
 
 };

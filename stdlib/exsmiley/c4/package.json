@@ -4,7 +4,9 @@
   "description": "",
   "author": "exsmiley <exsmiley@gmail.com>",
   "main": "functions/__main__.js",
-  "dependencies": {},
+  "dependencies": {
+    "lib": "^3.0.1"
+  },
   "private": true,
   "stdlib": {
     "build": "faaslang",

@@ -42,9 +42,10 @@ function isTie(marked, gameOver) {
 module.exports = (team, loc, reset=false, context, callback) => {
 	if(reset && gameOver) {
 		lastTeam = Math.round(Math.random());
+		gameOver = false;
 		marked = ['~', '~', '~', '~', '~', '~', '~', '~', '~'];
 		let color = 'Red';
-	    if(lastTeam != 0) {
+	    if(lastTeam == 0) {
 	      color = 'Blue';
 	    }
 	    lib.exsmiley.tracker['@dev']({post: true, store: {'name': 'ttt', 'info': marked}}, function (err, result) {
