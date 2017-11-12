@@ -17,7 +17,7 @@ module.exports = (post=false, store={}, context, callback) => {
       scores[store['name']][store['team']]++;
       callback(null, {'success': true});
     } else {
-      callback(null, {'success': false});
+      callback(null, {'success': false, 'info': store});
     }
   }
 };

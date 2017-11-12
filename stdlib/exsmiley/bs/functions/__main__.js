@@ -195,6 +195,7 @@ module.exports = (team=0, x='C', y=5, reset=false, turn=false, context, callback
       gameOver = true;
       winner = color;
       text += `\nThe ${color} team won!`
+      lib.exsmiley.scores['@dev']({post: true, store: {'name': 'bs', 'team': team}}, function (err, result) {});
     }
 
     lib.exsmiley.tracker['@dev']({post: true, store: {'name': 'bs', 'info': boards}}, function (err, result) {

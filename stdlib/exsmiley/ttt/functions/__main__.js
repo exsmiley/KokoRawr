@@ -93,6 +93,7 @@ module.exports = (team, loc, reset=false, turn=false, context, callback) => {
 	    let text = ` played at location: ${loc}\n` + markedToBoard(marked);
 	    if(gameOver) {
 	    	text += `${color} won the game!`
+	    	lib.exsmiley.scores['@dev']({post: true, store: {'name': 'ttt', 'team': team}}, function (err, result) {});
 	    }
 
 	    if(isTie(marked, gameOver)) {
