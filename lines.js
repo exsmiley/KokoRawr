@@ -74,3 +74,5 @@ function drawC4Lines (linewidth, strokeStyle) {
 }
 
 drawC4Lines(lineWidth, lineColor);
+
+drawTTTLines(lineWidth, lineColor);

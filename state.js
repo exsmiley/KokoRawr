@@ -4,60 +4,34 @@ var lineWidth = 10;
 
 
 // PLACE TIC TAC TOE PEICES
-var canvas = document.getElementById('tic-tac-toe-board');
-var context = canvas.getContext('2d');
-var sectionSize = canvasSize / 3;
-
-var position = canvas.getBoundingClientRect();
-
 function drawTTT (arr) {
+	var canvas = document.getElementById('tic-tac-toe-board');
+	var context = canvas.getContext('2d');
+	var secSize = canvasSize / 3;
+
 	for (i = 0; i < arr.length; i++) {
-		updateTTT(arr[i], i);
+		updateTTT(canvas, context, arr[i], i, secSize);
 	}
 }
 
-function updateTTT (team, loc) {
-	var x = position.left + 0.5;
-	var y = position.top + 0.5;
+function updateTTT (canvas, context, team, loc, secSize) {
+	var x = (loc % 3) * secSize;
+	var y = Math.floor(loc / 3) * secSize;
 
-	switch(loc % 3) {
-		case 0:
-			x += - 8;
-			break;
-		case 1:
-			x += sectionSize - 8;
-			break;
-		case 2:
-			x += 2 * sectionSize - 8;
-			break;
-	}
-
-	switch(Math.floor(loc / 3)) {
-		case 0:
-			y += - 8;
-			break;
-		case 1:
-			y += sectionSize - 8;
-			break;
-		case 2:
-			y += 2 * sectionSize- 8;
-			break;
-	}
-
-	clear(x,y, sectionSize);
+	clear(context, x, y, secSize);
 	if (team == 0) {
-		drawX(x, y);
+		drawX(context, x, y, secSize);
 	} else if (team == 1) {
-		drawO(x,y);
+		drawO(context, x, y, secSize);
 	}
 }
 
-function drawO (x, y) {
-	var halfSectionSize = (0.5 * sectionSize);
+function drawO (context, x, y, secSize) {
+	var halfSectionSize = (0.5 * secSize);
 	var centerX = x + halfSectionSize;
 	var centerY = y + halfSectionSize;
 	var sizeOfO = 50;					// <<--- change this to change size of O
-	var radius = (sectionSize - sizeOfO) / 2;
+	var radius = (secSize - sizeOfO) / 2;
 	var startAngle = 0 * Math.PI; 
 	var endAngle = 2 * Math.PI;
 
@@ -68,16 +42,16 @@ function drawO (x, y) {
 	context.stroke();
 }
 
-function drawX (x, y) {
+function drawX (context, x, y, secSize) {
 	context.strokeStyle = "#f1be32";		// yellow
 	context.beginPath();
 	  
-	var sizeOfX = sectionSize - 25;		// <<--- change this to change size of X
+	var sizeOfX = secSize - 25;		// <<--- change this to change size of X
 	context.moveTo(x + sizeOfX, y + sizeOfX);
-	context.lineTo(x + sectionSize - sizeOfX, y + sectionSize - sizeOfX);
+	context.lineTo(x + secSize - sizeOfX, y + secSize - sizeOfX);
 
-	context.moveTo(x + sizeOfX, y + sectionSize - sizeOfX);
-	context.lineTo(x + sectionSize - sizeOfX, y + sizeOfX);
+	context.moveTo(x + sizeOfX, y + secSize - sizeOfX);
+	context.lineTo(x + secSize - sizeOfX, y + sizeOfX);
 
 	context.stroke();
 }
@@ -87,69 +61,55 @@ function drawX (x, y) {
 
 
 // PLACE CONNECT FOUR PIECES
-var canvas2 = document.getElementById('connect-four-board');
-var context2 = canvas2.getContext('2d');
-var sectionSize2 = (canvasHeight - 12) / 6;
-
-var position2 = canvas2.getBoundingClientRect();
-console.log("sectionSize = " + sectionSize2);
-
 function drawC4 (arrlist) {
+	var canvas = document.getElementById('connect-four-board');
+	var context = canvas.getContext('2d');
+	var secSize = (canvasHeight - 12) / 6;
+
 	for (r = 0; r < arrlist.length; r++) {
 		for (c = 0; c < arrlist[0].length; c++) {
 			console.log(arrlist[r][c] + " " + r +" " + c);
-			updateC4(arrlist[r][c], r, c);
-
+			updateC4(context, arrlist[r][c], r, c, secSize);
 		}
 	}
 }
 
-function updateC4 (team, row, col) {
-	// var x = position2.left - 8;
-	// var y = position2.top - 8;
-	// x += col * sectionSize2;
-	// y += row * sectionSize2;
-	var x = col * sectionSize2;
-	var y = row * sectionSize2 + 200;
-	console.log("Xnew = " + x);
-	console.log("YNew = " + y);
+function updateC4 (context, team, row, col, secSize) {
+	var x = col * secSize;
+	var y = row * secSize;
 
-	clear(x, y, sectionSize);
+	clear(context, x, y, secSize);
 	if (team == 'B') {						// yellow
-		drawToken('#fbc500', x, y);
+		drawToken(context, '#fbc500', x, y,secSize);
 	} else if (team == 'R') {				// red
-		drawToken('#cd1a30', x, y);
+		drawToken(context, '#cd1a30', x, y, secSize);
 	}
 }
 
-function drawToken (color, x, y) {
-	var halfSectionSize = (0.5 * sectionSize2);
+function drawToken (context, color, x, y, secSize) {
+	var halfSectionSize = (0.5 * secSize);
 	var centerX = x + halfSectionSize;
 	var centerY = y + halfSectionSize;
-	var sizeOfO = (sectionSize2 - 7.83)  / 2;					// <<--- change this to change size of O
-	var radius = (sectionSize2 - sizeOfO) / 2;
+	var sizeOfO = (secSize - 10)  / 2;					// <<--- change this to change size of O
+	var radius = (secSize - sizeOfO) / 2;
 	var startAngle = 0 * Math.PI; 
 	var endAngle = 2 * Math.PI;
 
-	context2.lineWidth = lineWidth;
-	context2.strokeStyle = color;
-	context2.beginPath();
-	context2.arc(centerX, centerY, radius, startAngle, endAngle);
-	context2.fillStyle = color;
-    context2.fill();
-	context2.stroke();
+	context.lineWidth = lineWidth;
+	context.strokeStyle = color;
+	context.beginPath();
+	context.arc(centerX, centerY, radius, startAngle, endAngle);
+	context.fillStyle = color;
+    context.fill();
+	context.stroke();
 
 	console.log("drawn");
 }
 
 
-var c4 = [["R","~","~","~","~","~","~"],["~","~","~","~","~","~","~"],["~","~","~","~","~","~","~"],["~","~","~","~","~","~","~"],["~","~","~","~","B","~","~"],["~","~","B","R","R","~","B"]];
-
-drawC4(c4);
-
 
 // UNIVERSAL FUNCTIONS
-function clear (x, y, secSize) {
+function clear (context, x, y, secSize) {
   context.fillStyle = "#fff";
   x += lineWidth / 2;
   y += lineWidth /2
@@ -167,8 +127,9 @@ function updateBoards () {
 					case 'ttt':
 						drawTTT(todo['ttt']);
 						break;
-					// case 'c4':
-					// 	drawC4(todo['c4']);
+					case 'c4':
+						drawC4(todo['c4']);
+						break;
 				}
 			}
 		}
