@@ -4,7 +4,7 @@ const xMap = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
 /**
 * /bs
 *
-*   Tells the user BattleShip information.
+*   Tells the user Battleship information.
 *
 * @param {string} user The user id of the user that invoked this command (name is usable as well)
 * @param {string} channel The channel id the command was executed in (name is usable as well)
@@ -34,7 +34,7 @@ module.exports = (user, channel, text = '', command = {}, botToken = null, callb
       // handle it
       callback(err, {
           response_type: 'in_channel',
-          text: `(BattleShip) <@${user}>:${color} ` +'location out of bounds (1->9 valid) or invalid command (location number or "reset")!'
+          text: `(Battleship) <@${user}>:${color} ` +'location out of bounds (1->9 valid) or invalid command (location number or "reset")!'
         });
     }
 
@@ -47,7 +47,7 @@ module.exports = (user, channel, text = '', command = {}, botToken = null, callb
     lib.exsmiley.bs['@dev']({team: team, x: x, y: y, reset: reset, turn: turn}, function(err, result) {
         callback(null, {
           response_type: 'in_channel',
-          text: `(BattleShip) <@${user}>:${color} ` + result['text']
+          text: `(Battleship) <@${user}>:${color} ` + result['text']
         });
       });
     });
