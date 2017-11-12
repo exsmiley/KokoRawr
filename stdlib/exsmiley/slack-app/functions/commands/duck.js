@@ -19,12 +19,20 @@ module.exports = (user, channel, text = '', command = {}, botToken = null, callb
     if(team != 0) {
       color = 'Blue';
     }
-
-    lib.exsmiley.duck['@dev']({team: team}, function(err, result) {
+    if(text === 'help') {
+      let resp = `(Duck Duck Goose) <@${user}>:${color} thanks for asking for help!
+In this version of Duck Duck Goose, users simply call the /duck command and will get a reply saying that either they are a duck or that they are a goose. One team point is awarded for a duck, but 5 points are deducted for a goose.`
       callback(null, {
-        response_type: 'in_channel',
-        text: `(Duck Duck Goose) <@${user}>:${color} ` + result
+          response_type: 'in_channel',
+          text: resp
+        });
+    } else {
+      lib.exsmiley.duck['@dev']({team: team}, function(err, result) {
+        callback(null, {
+          response_type: 'in_channel',
+          text: `(Duck Duck Goose) <@${user}>:${color} ` + result
+        });
       });
-    });
+    }
   });
 };

@@ -19,12 +19,13 @@ module.exports = (user, channel, text = '', command = {}, botToken = null, callb
     let reset = text.includes('reset');
     let turn = text.includes('turn');
     let state = text.includes('state');
+    let help = text.includes('help');
     let color = 'Red';
     if(team != 0) {
       color = 'Blue';
     }
 
-    if (err || (isNaN(loc) || loc < 1 || loc > 7) && !reset && !turn && !state) {
+    if (err || (isNaN(loc) || loc < 1 || loc > 7) && !reset && !turn && !state && !help) {
       // handle it
       callback(err, {
           response_type: 'in_channel',
@@ -37,11 +38,20 @@ module.exports = (user, channel, text = '', command = {}, botToken = null, callb
       loc = 0;
     }
 
-    lib.exsmiley.c4['@dev']({team: team, location: loc, reset: reset, turn: turn, state: state}, function(err, result) {
+    if(help) {
+      let resp = `(Connect 4) <@${user}>:${color} thanks for asking for help!
+In Connect 4, players take turns placing a piece in columns 1-7. Once a piece is placed, it drops to the bottom of the column. The goal of the game is to get 4 pieces in a row, whether it be horizontally, vertically, or diagonally.`
+      callback(null, {
+          response_type: 'in_channel',
+          text: resp
+        });
+    } else {
+      lib.exsmiley.c4['@dev']({team: team, location: loc, reset: reset, turn: turn, state: state}, function(err, result) {
         callback(null, {
           response_type: 'in_channel',
           text: `(Connect 4) <@${user}>:${color} ` + result['text']
         });
       });
-    });
-  }
+    }
+  });
+}

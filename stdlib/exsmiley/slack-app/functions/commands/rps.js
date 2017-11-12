@@ -21,12 +21,21 @@ module.exports = (user, channel, text = '', command = {}, botToken = null, callb
     text = 'scissors'
   }
 
-  lib.exsmiley.teammaker['@dev']({name: user}, function (err, team) {
-    lib.exsmiley.rps['@dev']({user: user, team: team, option: text}, function(err, result) {
+  if(text.includes('help')) {
+    let resp = `(Rock Paper Scissors) <@${user}>:${color} thanks for asking for help!
+In this version of Rock Paper Scissors, users call the /rps command followed by one of rock, paper, and scissors. Once the user is paired with another, the duel begins. In this duel paper beats rock, scissors beats paper, and rock beats scissors. If the same tool is picked by both users, then it is a draw.`
       callback(null, {
-        response_type: 'in_channel',
-        text: `(Rock Paper Scissors) ` + result
+          response_type: 'in_channel',
+          text: resp
+        });
+  } else {
+    lib.exsmiley.teammaker['@dev']({name: user}, function (err, team) {
+      lib.exsmiley.rps['@dev']({user: user, team: team, option: text}, function(err, result) {
+        callback(null, {
+          response_type: 'in_channel',
+          text: `(Rock Paper Scissors) ` + result
+        });
       });
     });
-  });
+  }
 };

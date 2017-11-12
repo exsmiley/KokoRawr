@@ -20,6 +20,8 @@ Commands:
   - /herp brings up this help text
   - /team tells you which team you're on
   - /scores the team scores across all games
+
+  All of the following games also accept help as valid input (ie. /ttt help):
   - /ttt lets you play Tic Tac Toe
     valid input: location to place 1-9 (/ttt 3), reset (/ttt reset), turn (/ttt turn), board state (/ttt state)
   - /c4 lets you play Connect 4
@@ -32,6 +34,7 @@ Commands:
   - /mind plays Mastermind
     valid input: a 4-digit number (/mind 0264)
 
+Games can be viewed at https://kokorawr.herokuapp.com/
 Thanks for playing KokoRawr!`;
 
   callback(null, {

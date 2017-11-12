@@ -24,7 +24,7 @@ module.exports = (user, channel, text = '', command = {}, botToken = null, callb
       let resp = `(Mastermind) <@${user}>:${color} thanks for asking for help!
 Mastermind is a game in which one user picks a 4-digit number (with each digit in the range 0-9). Then every other user is trying to guess what that number is.
 
-A user guesses their own 4-digit number and will get a response to help them crack the code. The response consists of white pegs which tell you how many numbers exist in the solution from the guess and red pegs which are the number of numbers in the guess that match the solution exactly.
+A user chooses their own 4-digit number as a guess and will get a response based on their guess to help them crack the code. The response consists of white pegs which tell you how many numbers exist in the solution from the guess and red pegs which are the number of numbers in the guess that match the solution exactly.
 
 The guesser wins when they guess the solution correctly!`
       callback(null, {
