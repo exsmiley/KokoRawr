@@ -37,10 +37,17 @@ function isTie(marked, gameOver) {
 * @param {integer} team What token is placed for that team
 * @param {integer} loc Where the token is placed
 * @param {boolean} reset if the game should be reset
+* @param {boolean} turn asks whose turn it is
 * @returns {object} {text: str, success: bool}
 */
-module.exports = (team, loc, reset=false, context, callback) => {
-	if(reset && gameOver) {
+module.exports = (team, loc, reset=false, turn=false, context, callback) => {
+	if(turn) {
+	    let color = 'Red';
+	    if(lastTeam == 0) {
+	      color = 'Blue';
+	    }
+	    callback(null, {text: `It is ${color}'s turn!`, success: true});
+  	} else if(reset && gameOver) {
 		lastTeam = Math.round(Math.random());
 		gameOver = false;
 		marked = ['~', '~', '~', '~', '~', '~', '~', '~', '~'];

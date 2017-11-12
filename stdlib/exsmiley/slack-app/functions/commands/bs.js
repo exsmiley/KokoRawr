@@ -1,9 +1,10 @@
 const lib = require('lib')({token: process.env.STDLIB_TOKEN});
+const xMap = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
 
 /**
-* /c4
+* /bs
 *
-*   Tells the user Connect 4 information.
+*   Tells the user BattleShip information.
 *
 * @param {string} user The user id of the user that invoked this command (name is usable as well)
 * @param {string} channel The channel id the command was executed in (name is usable as well)
@@ -15,7 +16,6 @@ const lib = require('lib')({token: process.env.STDLIB_TOKEN});
 module.exports = (user, channel, text = '', command = {}, botToken = null, callback) => {
   lib.exsmiley.teammaker['@dev']({name: user}, function (err, team) {
 
-    let loc = parseInt(text);
     let reset = text.includes('reset');
     let turn = text.includes('turn');
     let color = 'Red';
@@ -23,23 +23,31 @@ module.exports = (user, channel, text = '', command = {}, botToken = null, callb
       color = 'Blue';
     }
 
-    if (err || (isNaN(loc) || loc < 1 || loc > 7) && !reset && !turn) {
+    let x = 'A';
+    let y = 0;
+    if(!reset) {
+      x = text[0].toUpperCase();
+      y = parseInt(text[1]);
+    }
+
+    if (err || (isNaN(y) || y < 0 || y > 9 || xMap.indexOf(x) == -1) && !reset && !turn) {
       // handle it
       callback(err, {
           response_type: 'in_channel',
-          text: `(Connect 4) <@${user}>:${color} ` +'location out of bounds (1->7 valid) or invalid command (location number or "reset")!'
+          text: `(BattleShip) <@${user}>:${color} ` +'location out of bounds (1->9 valid) or invalid command (location number or "reset")!'
         });
     }
 
     // makes sure no errors occur
-    if(reset || turn) {
-      loc = 0;
+    if(reset||turn) {
+      x = 'A';
+      y = 0;
     }
 
-    lib.exsmiley.c4['@dev']({team: team, location: loc, reset: reset, turn: turn}, function(err, result) {
+    lib.exsmiley.bs['@dev']({team: team, x: x, y: y, reset: reset, turn: turn}, function(err, result) {
         callback(null, {
           response_type: 'in_channel',
-          text: `(Connect 4) <@${user}>:${color} ` + result['text']
+          text: `(BattleShip) <@${user}>:${color} ` + result['text']
         });
       });
     });

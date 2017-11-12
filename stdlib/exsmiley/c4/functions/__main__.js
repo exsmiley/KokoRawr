@@ -106,13 +106,20 @@ function boardToText(board) {
 * @param {integer} team the team who is making the move
 * @param {integer} location the location (1-7) to place a piece
 * @param {boolean} reset whether the game should be restarted
+* @param {boolean} turn asks whose turn it is
 * @returns {object}
 */
-module.exports = (team=0, location=0, reset=false, context, callback) => {
+module.exports = (team=0, location=0, reset=false, turn=false, context, callback) => {
   let json = {};
   let top = getTopLocation(location);
 
-  if(gameOver && reset) {
+  if(turn) {
+    let color = 'Red';
+    if(lastTeam == 0) {
+      color = 'Blue';
+    }
+    callback(null, {text: `It is ${color}'s turn!`, success: true});
+  } else if(gameOver && reset) {
     json['success'] = true;
     resetBoard()
     json['text'] = 'Successfully reset the game!\n' + boardToText(board)

@@ -16,50 +16,31 @@ module.exports = (user, channel, text = '', command = {}, botToken = null, callb
   lib.exsmiley.teammaker['@dev']({name: user}, function (err, team) {
 
     let loc = parseInt(text);
+    let turn = text.includes('turn');
     let reset = text.includes('reset');
+    let color = 'Red';
+    if(team != 0) {
+      color = 'Blue';
+    }
 
-    if (err || (isNaN(loc) || loc < 1 || loc > 9) && !reset) {
+    if (err || (isNaN(loc) || loc < 1 || loc > 9) && !reset && !turn) {
       // handle it
       callback(err, {
           response_type: 'in_channel',
-          text: 'location out of bounds (1->9 valid) or invalid command (location number or "reset")!'
+          text: `(Tic Tac Toe) <@${user}>:${color} ` +'location out of bounds (1->9 valid) or invalid command (location number or "reset")!'
         });
     }
 
     // makes sure no errors occur
-    if(reset) {
+    if(reset||turn) {
       loc = 0;
     }
 
-    lib.exsmiley.ttt['@dev']({team: team, loc: loc, reset: reset}, function(err, result) {
-
-      if (!result['success']) {
-        // handle it
+    lib.exsmiley.ttt['@dev']({team: team, loc: loc, reset: reset, turn: turn}, function(err, result) {
         callback(null, {
           response_type: 'in_channel',
-          text: '(Tic Tac Toe) ' + result['text']
+          text: `(Tic Tac Toe) <@${user}>:${color} ` + result['text']
         });
-      } else {
-        let text = result['text'];
-
-        if(text.includes('|')) {
-          let color = 'Red';
-          if(team != 0) {
-            color = 'Blue';
-          }
-          text = `(Tic Tac Toe) <@${user}>:${color}` + text;
-        } else {
-          text = '(Tic Tac Toe) ' + text;
-        }
-
-        callback(null, {
-          response_type: 'in_channel',
-          text: text
-        });
-      }
+      });
     });
-    
-
-  });
-
-};
+  };
