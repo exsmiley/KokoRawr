@@ -29,6 +29,8 @@ Commands:
   - /duck lets you know if you're a duck or a goose
   - /rps plays rock paper scissors with the other team
     valid input: rock, paper, or scissors: the choice is yours! (/rps rock)
+  - /mind plays Mastermind
+    valid input: a 4-digit number (/mind 0264)
 
 Thanks for playing KokoRawr!`;
 
