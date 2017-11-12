@@ -14,7 +14,7 @@ const lib = require('lib')({token: process.env.STDLIB_TOKEN});
 */
 module.exports = (user, channel, text = '', command = {}, botToken = null, callback) => {
   let resp = `Hi <@${user}>!
-Welcome to KokoRawr, the chaotic cooperative experience! We have several games that you can play together. You are automatically assigned a team through your Slack username.
+Welcome to KokoRawr, the chaotic cooperative gaming experience! We have several games that you can play together. You are automatically assigned a team through your Slack username.
   
 Commands:
   - /herp brings up this help text
