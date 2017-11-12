@@ -20,11 +20,12 @@ Commands:
   - /herp brings up this help text
   - /team tells you which team you're on
   - /ttt lets you play Tic Tac Toe
-    valid input: location to place 1-9 (/ttt 3), reset (/ttt reset), turn (/ttt turn)
+    valid input: location to place 1-9 (/ttt 3), reset (/ttt reset), turn (/ttt turn), board state (/ttt state)
   - /c4 lets you play Connect 4
-    valid input: location to place 1-7 (/ttt 6), reset (/ttt reset), turn (/ttt turn)
+    valid input: location to place 1-7 (/c4 6), reset (/c4 reset), turn (/c4 turn), board state (/c4 state)
   - /bs lets you play Battleship
-    valid input: coordinate to fire A0-J9 (/ttt C5), reset (/ttt reset), turn (/ttt turn)
+    valid input: coordinate to fire A0-J9 (/bs C5), reset (/bs reset), turn (/bs turn), board state (/bs state)
+  - /duck lets you know if you're a duck or a goose
 
 Thanks for playing KokoRawr!`;
 

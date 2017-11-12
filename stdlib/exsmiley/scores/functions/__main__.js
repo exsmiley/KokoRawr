@@ -14,7 +14,11 @@ module.exports = (post=false, store={}, context, callback) => {
       if(!scores.hasOwnProperty(store['name'])) {
         scores[store['name']] = [0, 0];
       }
-      scores[store['name']][store['team']]++;
+      if('diff' in store) {
+        scores[store['name']][store['team']] += store['diff'];
+      } else {
+        scores[store['name']][store['team']]++;
+      }
       callback(null, {'success': true});
     } else {
       callback(null, {'success': false, 'info': store});
