@@ -24,10 +24,14 @@ module.exports = (user, channel, text = '', command = {}, botToken = null, callb
     if(!result.hasOwnProperty('bs')) {
       result['bs'] = [0, 0]
     }
+    if(!result.hasOwnProperty('duck')) {
+      result['duck'] = [0, 0]
+    }
     resp += `
 Tic Tac Toe: Red(${result['ttt'][0]}) Blue(${result['ttt'][1]})
 Connect 4: Red(${result['c4'][0]}) Blue(${result['c4'][1]})
-Battleship: Red(${result['bs'][0]}) Blue(${result['bs'][1]})`
+Battleship: Red(${result['bs'][0]}) Blue(${result['bs'][1]})
+Duck Duck Goose: Red(${result['duck'][0]}) Blue(${result['duck'][1]})`
     callback(null, {
       response_type: 'in_channel',
       text: resp
