@@ -1,0 +1,13 @@
+#tic-tac-toe-board {
+  display: relative;
+  margin: 0 auto;
+  border: 10px black solid;
+  padding: 20px;
+}
+
+#connect-four-board {
+  display: relative;
+  margin: 0 auto;
+  border: 10px black solid;
+  padding: 20px;
+}
