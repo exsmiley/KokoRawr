@@ -1,6 +1,5 @@
-from flask import Flask, render_template, redirect, url_for, request
+from flask import Flask, render_template
 import os
-from status import main
 
 app = Flask(__name__)
 
