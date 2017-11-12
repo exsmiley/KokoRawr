@@ -159,7 +159,7 @@ module.exports = (team=0, location=0, reset=false, turn=false, context, callback
       }
       gameOver = true;
       json['text'] += `\n${teamName} won!`
-      lib.exsmiley.scores['@dev']({post: true, store: {'name': 'bs', 'team': team}}, function (err, result) {});
+      lib.exsmiley.scores['@dev']({post: true, store: {'name': 'c4', 'team': team}}, function (err, result) {});
     } else if(checkTie(board)) {
       json['text'] += "\nIt's a tie!";
       gameOver = true;
