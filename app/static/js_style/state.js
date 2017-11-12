@@ -136,7 +136,7 @@ function updateBoards () {
 	};
 	xhttp.open("GET", "https://exsmiley.lib.id/tracker@dev", true);
 	xhttp.send();
-	// setTimeout(updateBoards, 1000);
+	setTimeout(updateBoards, 1000);
 }
 
 updateBoards();
