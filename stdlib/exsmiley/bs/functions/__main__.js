@@ -141,9 +141,10 @@ reset();
 * @param {integer} y j coordinate to hit
 * @param {boolean} reset whether the board should be reset
 * @param {boolean} turn asks whose turn it is
+* @param {boolean} state gets the state of the board
 * @returns {object}
 */
-module.exports = (team=0, x='C', y=5, reset=false, turn=false, context, callback) => {
+module.exports = (team=0, x='C', y=5, reset=false, turn=false, state=false, context, callback) => {
   // turn into integer
   xInd = xMap.indexOf(x);
 
@@ -153,6 +154,8 @@ module.exports = (team=0, x='C', y=5, reset=false, turn=false, context, callback
       color = 'Blue';
     }
     callback(null, {text: `It is ${color}'s turn!`, success: true});
+  } else if(state) {
+    callback(null, {text: '\n'+boardToString(boards[team]), success: true});
   } else if(reset && gameOver) {
     reset();
     let color = 'Red';

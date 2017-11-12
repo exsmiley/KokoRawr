@@ -18,6 +18,7 @@ module.exports = (user, channel, text = '', command = {}, botToken = null, callb
 
     let reset = text.includes('reset');
     let turn = text.includes('turn');
+    let state = text.includes('state');
     let color = 'Red';
     if(team != 0) {
       color = 'Blue';
@@ -30,7 +31,7 @@ module.exports = (user, channel, text = '', command = {}, botToken = null, callb
       y = parseInt(text[1]);
     }
 
-    if (err || (isNaN(y) || y < 0 || y > 9 || xMap.indexOf(x) == -1) && !reset && !turn) {
+    if (err || (isNaN(y) || y < 0 || y > 9 || xMap.indexOf(x) == -1) && !reset && !turn && !state) {
       // handle it
       callback(err, {
           response_type: 'in_channel',
@@ -39,12 +40,12 @@ module.exports = (user, channel, text = '', command = {}, botToken = null, callb
     }
 
     // makes sure no errors occur
-    if(reset||turn) {
+    if(reset||turn||state) {
       x = 'A';
       y = 0;
     }
 
-    lib.exsmiley.bs['@dev']({team: team, x: x, y: y, reset: reset, turn: turn}, function(err, result) {
+    lib.exsmiley.bs['@dev']({team: team, x: x, y: y, reset: reset, turn: turn, state: state}, function(err, result) {
         callback(null, {
           response_type: 'in_channel',
           text: `(Battleship) <@${user}>:${color} ` + result['text']

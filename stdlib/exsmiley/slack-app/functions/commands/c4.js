@@ -18,12 +18,13 @@ module.exports = (user, channel, text = '', command = {}, botToken = null, callb
     let loc = parseInt(text);
     let reset = text.includes('reset');
     let turn = text.includes('turn');
+    let state = text.includes('state');
     let color = 'Red';
     if(team != 0) {
       color = 'Blue';
     }
 
-    if (err || (isNaN(loc) || loc < 1 || loc > 7) && !reset && !turn) {
+    if (err || (isNaN(loc) || loc < 1 || loc > 7) && !reset && !turn && !state) {
       // handle it
       callback(err, {
           response_type: 'in_channel',
@@ -32,11 +33,11 @@ module.exports = (user, channel, text = '', command = {}, botToken = null, callb
     }
 
     // makes sure no errors occur
-    if(reset || turn) {
+    if(reset||turn||state) {
       loc = 0;
     }
 
-    lib.exsmiley.c4['@dev']({team: team, location: loc, reset: reset, turn: turn}, function(err, result) {
+    lib.exsmiley.c4['@dev']({team: team, location: loc, reset: reset, turn: turn, state: state}, function(err, result) {
         callback(null, {
           response_type: 'in_channel',
           text: `(Connect 4) <@${user}>:${color} ` + result['text']
