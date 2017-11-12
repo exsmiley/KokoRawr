@@ -10,7 +10,7 @@ function randInt(min, max) {
 * @returns {string}
 */
 module.exports = (team, context, callback) => {
-  let num = randInt(0, 7);
+  let num = randInt(0, 3);
 
   if(num != 0) {
     lib.exsmiley.scores['@dev']({post: true, store: {'name': 'duck', 'team': team}}, function (err, result) {
