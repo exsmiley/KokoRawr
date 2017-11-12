@@ -19,6 +19,7 @@ Welcome to KokoRawr, the chaotic cooperative experience! We have several games t
 Commands:
   - /herp brings up this help text
   - /team tells you which team you're on
+  - /scores the team scores across all games
   - /ttt lets you play Tic Tac Toe
     valid input: location to place 1-9 (/ttt 3), reset (/ttt reset), turn (/ttt turn), board state (/ttt state)
   - /c4 lets you play Connect 4
@@ -26,6 +27,8 @@ Commands:
   - /bs lets you play Battleship
     valid input: coordinate to fire A0-J9 (/bs C5), reset (/bs reset), turn (/bs turn), board state (/bs state)
   - /duck lets you know if you're a duck or a goose
+  - /rps plays rock paper scissors with the other team
+    valid input: rock, paper, or scissors: the choice is yours! (/rps rock)
 
 Thanks for playing KokoRawr!`;
 
