@@ -14,7 +14,7 @@ const scores = require('../../helpers/scores.js');
 */
 module.exports = (user, channel, text = '', command = {}, botToken = null, callback) => {
   let resp = `Hi <@${user}>! Here are the current scores:`;
-  scores({post: false}, function (err, result) {
+  scores(false, undefined, undefined, function (err, result) {
     if(!result.hasOwnProperty('ttt')) {
       result['ttt'] = [0, 0]
     }

@@ -1,4 +1,4 @@
-const teammaker = require('../../helpers/teammaker.js');
+const team = require('../../helpers/team.js');
 const c4 = require('../../helpers/c4.js');
 
 /**
@@ -14,7 +14,7 @@ const c4 = require('../../helpers/c4.js');
 * @returns {object}
 */
 module.exports = (user, channel, text = '', command = {}, botToken = null, callback) => {
-  teammaker({name: user}, function (err, team) {
+  team(user, undefined, function (err, teamr) {
 
     let loc = parseInt(text);
     let reset = text.includes('reset');
@@ -22,7 +22,7 @@ module.exports = (user, channel, text = '', command = {}, botToken = null, callb
     let state = text.includes('state');
     let help = text.includes('help');
     let color = 'Red';
-    if(team != 0) {
+    if(teamr != 0) {
       color = 'Blue';
     }
 
@@ -47,7 +47,7 @@ In Connect 4, players take turns placing a piece in columns 1-7. Once a piece is
           text: resp
         });
     } else {
-      c4({team: team, location: loc, reset: reset, turn: turn, state: state}, function(err, result) {
+      c4(teamr, loc, reset, turn, state, undefined, function(err, result) {
         callback(null, {
           response_type: 'in_channel',
           text: `(Connect 4) <@${user}>:${color} ` + result['text']

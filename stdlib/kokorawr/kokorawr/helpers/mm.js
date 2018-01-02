@@ -50,27 +50,27 @@ function calculateStats(guess, actual) {
 * @param {string} guess 4-digit number to guess
 * @returns {string}
 */
-module.exports = function mm(user='bob', team=0, guess='', context, callback) => {
+module.exports = function mm(user='bob', team=0, guess='', context, callback) {
   if(guess.length != 4 || isNaN(parseInt(guess))) {
-    callback(null, `${guess} is not a 4-digit number`);
+    return callback(null, `${guess} is not a 4-digit number`);
   } else if(storedNumber == null) {
     storedUser = user;
     storedNumber = guess;
-    callback(null, `had a number selected as the number to guess!`);
+    return callback(null, `had a number selected as the number to guess!`);
   } else if(user == storedUser) {
-    callback(null, `is not supposed to try guessing his/her own number!`);
+    return callback(null, `is not supposed to try guessing his/her own number!`);
   } else {
     let pegs = calculateStats(guess, storedNumber);
     if(pegs[1] == 4) {
       // won the game
       storedNumber = null;
       storedUser = null;
-      scores({post: true, store: {'name': 'mind', 'team': team}}, function (err, result) {
-        callback(null, `correctly guessed the number ${guess}`);
+      scores(true, {'name': 'mind', 'team': team}, undefined, function (err, result) {
+        return callback(null, `correctly guessed the number ${guess}`);
       });
     } else {
       // continue playing
-      callback(null, `guessed ${guess} and got ${pegs[0]} white pegs and ${pegs[1]} red pegs!`);
+      return callback(null, `guessed ${guess} and got ${pegs[0]} white pegs and ${pegs[1]} red pegs!`);
     }
   }
 };

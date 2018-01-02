@@ -42,15 +42,15 @@ function isTie(marked, gameOver) {
 * @param {boolean} state gets the state of the board
 * @returns {object} {text: str, success: bool}
 */
-module.exports = function ttt(team, loc, reset=false, turn=false, state=false, context, callback) => {
+module.exports = function ttt(team, loc, reset=false, turn=false, state=false, context, callback) {
 	if(turn) {
 	    let color = 'Red';
 	    if(lastTeam == 0) {
 	      color = 'Blue';
 	    }
-	    callback(null, {text: `It is ${color}'s turn!`, success: true});
+	    return callback(null, {text: `It is ${color}'s turn!`, success: true});
   	} else if(state) {
-  		callback(null, {text: '\n'+markedToBoard(marked), success: true});
+  		return callback(null, {text: '\n'+markedToBoard(marked), success: true});
   	} else if(reset && gameOver) {
 		lastTeam = Math.round(Math.random());
 		gameOver = false;
@@ -59,21 +59,21 @@ module.exports = function ttt(team, loc, reset=false, turn=false, state=false, c
 	    if(lastTeam == 0) {
 	      color = 'Blue';
 	    }
-	    ltracker({post: true, store: {'name': 'ttt', 'info': marked}}, function (err, result) {
-			callback(null, {text: `Successfully Reset! It is ${color}'s turn!`, success: true});
+	    tracker(true, {'name': 'ttt', 'info': marked}, undefined, function (err, result) {
+			return callback(null, {text: `Successfully Reset! It is ${color}'s turn!`, success: true});
 		});
 	} else if(gameOver) {
-		callback(null, {text: 'Game already over\n' + markedToBoard(marked), success: false})
+		return callback(null, {text: 'Game already over\n' + markedToBoard(marked), success: false})
 	} else if(reset) {
-		callback(null, {text: "Can't reset: game not over\n" + markedToBoard(marked), success: false})
+		return callback(null, {text: "Can't reset: game not over\n" + markedToBoard(marked), success: false})
 	} else if(lastTeam == team) {
 		let color = 'Red';
 	    if(team != 0) {
 	      color = 'Blue';
 	    }
-		callback(null, {text: `It is not ${color}'s turn.`, success: false})
+		return callback(null, {text: `It is not ${color}'s turn.`, success: false})
 	} else if (marked[loc-1] != '~'){
-		callback(null, {text: `Location ${loc} already marked!\n` + markedToBoard(marked), success: false});
+		return callback(null, {text: `Location ${loc} already marked!\n` + markedToBoard(marked), success: false});
 	} else {
 		marked[loc-1] = team;
 		lastTeam = team;
@@ -97,7 +97,7 @@ module.exports = function ttt(team, loc, reset=false, turn=false, state=false, c
 	    let text = ` played at location: ${loc}\n` + markedToBoard(marked);
 	    if(gameOver) {
 	    	text += `${color} won the game!`
-	    	scores({post: true, store: {'name': 'ttt', 'team': team}}, function (err, result) {});
+	    	scores(true, {'name': 'ttt', 'team': team}, undefined, function (err, result) {});
 	    }
 
 	    if(isTie(marked, gameOver)) {
@@ -105,8 +105,8 @@ module.exports = function ttt(team, loc, reset=false, turn=false, state=false, c
 	    	text += 'Tie game!'
 	    }
 
-	    tracker({post: true, store: {'name': 'ttt', 'info': marked}}, function (err, result) {
-			callback(null, {text: text, success: true});
+	    tracker(true, {'name': 'ttt', 'info': marked}, undefined, function (err, result) {
+			return callback(null, {text: text, success: true});
 		});
 	}
 };

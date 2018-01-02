@@ -11,7 +11,7 @@ let options = ['rock', 'paper', 'scissors']
 * @param {string} option rock, paper, or scissors
 * @returns {string}
 */
-module.exports = function rps(user='Bob', team=1, option='rock', context, callback) => {
+module.exports = function rps(user='Bob', team=1, option='rock', context, callback) {
 
   let index = options.indexOf(option.toLowerCase());
   let color = 'Red';
@@ -22,12 +22,12 @@ module.exports = function rps(user='Bob', team=1, option='rock', context, callba
   }
 
   if(index == -1) {
-    callback(null, `<@${user}>:${color}, ${option} is not a valid option`);
+    return callback(null, `<@${user}>:${color}, ${option} is not a valid option`);
   } else if(waitingTeam == team || waitingTeam == -1) {
     // enque the user
     waiting.push([user, index]);
     waitingTeam = team;
-    callback(null, `<@${user}>:${color} is waiting for a match...`);
+    return callback(null, `<@${user}>:${color} is waiting for a match...`);
   } else {
     // deque and do the result
     let other = waiting.shift();
@@ -41,17 +41,17 @@ module.exports = function rps(user='Bob', team=1, option='rock', context, callba
 
     if(index == otherIndex+1 || (index == 1 && otherIndex == 3)) {
       // user wins
-      scores({post: true, store: {'name': 'rps', 'team': team}}, function (err, result) {
-        callback(null, `<@${user}>:${color} beat <@${otherUser}>:${otherColor}'s ${options[otherIndex]} with ${options[index]}`);
+      scores(true, {'name': 'rps', 'team': team}, undefined, function (err, result) {
+        return callback(null, `<@${user}>:${color} beat <@${otherUser}>:${otherColor}'s ${options[otherIndex]} with ${options[index]}`);
       });
     } 
     else if(index == otherIndex) {
       // tie
-      callback(null, `<@${user}>:${color} and <@${otherUser}>:${otherColor} both chose ${options[index]}...`);
+      return callback(null, `<@${user}>:${color} and <@${otherUser}>:${otherColor} both chose ${options[index]}...`);
     } else {
       // other user wins
-      scores({post: true, store: {'name': 'rps', 'team': otherTeam}}, function (err, result) {
-        callback(null, `<@${otherUser}>:${otherColor} beat <@${user}>:${color}'s ${options[index]} with ${options[otherIndex]}`);
+      scores(true, {'name': 'rps', 'team': otherTeam}, undefined, function (err, result) {
+        return callback(null, `<@${otherUser}>:${otherColor} beat <@${user}>:${color}'s ${options[index]} with ${options[otherIndex]}`);
       });
     }
   }

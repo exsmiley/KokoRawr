@@ -6,9 +6,9 @@ scores = {}
 * @param {object} store information to store. Format should be {name: str, info: gameInfo}
 * @returns {object} {<game_name>: [red_score, blue_score]}
 */
-module.exports = function scores(post=false, store={}, context, callback) => {
+module.exports = function scores(post=false, store={}, context, callback) {
   if(!post) {
-    callback(null, scores);
+    return callback(null, scores);
   } else {
     if('name' in store && 'team' in store) {
       if(!scores.hasOwnProperty(store['name'])) {
@@ -19,9 +19,9 @@ module.exports = function scores(post=false, store={}, context, callback) => {
       } else {
         scores[store['name']][store['team']]++;
       }
-      callback(null, {'success': true});
+      return callback(null, {'success': true});
     } else {
-      callback(null, {'success': false, 'info': store});
+      return callback(null, {'success': false, 'info': store});
     }
   }
 };

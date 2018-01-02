@@ -1,4 +1,4 @@
-const teammaker = require('../../helpers/teammaker.js');
+const team = require('../../helpers/team.js');
 
 /**
 * /team
@@ -13,7 +13,7 @@ const teammaker = require('../../helpers/teammaker.js');
 * @returns {object}
 */
 module.exports = (user, channel, text = '', command = {}, botToken = null, callback) => {
-  teammaker({name: user}, function (err, result) {
+  team(user, undefined, function (err, teamr) {
 
     if (err) {
       // handle it
@@ -21,7 +21,7 @@ module.exports = (user, channel, text = '', command = {}, botToken = null, callb
     }
 
     let color = 'Red';
-    if(result != 0) {
+    if(teamr != 0) {
       color = 'Blue';
     }
 

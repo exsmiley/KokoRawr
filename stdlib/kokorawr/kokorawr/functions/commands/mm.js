@@ -1,4 +1,4 @@
-const teammaker = require('../../helpers/teammaker.js');
+const team = require('../../helpers/team.js');
 const mm = require('../../helpers/mm.js');
 
 /**
@@ -14,10 +14,10 @@ const mm = require('../../helpers/mm.js');
 * @returns {object}
 */
 module.exports = (user, channel, text = '', command = {}, botToken = null, callback) => {
-  teammaker({name: user}, function (err, team) {
+  team(user, undefined, function (err, teamr) {
 
     let color = 'Red';
-    if(team != 0) {
+    if(teamr != 0) {
       color = 'Blue';
     }
 
@@ -33,7 +33,7 @@ The guesser wins when they guess the solution correctly!`
           text: resp
         });
     } else {
-      mm({user: user, team: team, guess: text}, function(err, result) {
+      mm(user, teamr, text, undefined, function(err, result) {
         callback(null, {
           response_type: 'in_channel',
           text: `(Mastermind) <@${user}>:${color} ` + result

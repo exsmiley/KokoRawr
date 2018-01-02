@@ -1,4 +1,4 @@
-const teammaker = require('../../helpers/teammaker.js');
+const team = require('../../helpers/team.js');
 const ttt = require('../../helpers/ttt.js');
 
 /**
@@ -14,7 +14,7 @@ const ttt = require('../../helpers/ttt.js');
 * @returns {object}
 */
 module.exports = (user, channel, text = '', command = {}, botToken = null, callback) => {
-  teammaker({name: user}, function (err, team) {
+  team(user, undefined, function (err, teamr) {
 
     let loc = parseInt(text);
     let turn = text.includes('turn');
@@ -22,7 +22,7 @@ module.exports = (user, channel, text = '', command = {}, botToken = null, callb
     let state = text.includes('state');
     let help = text.includes('help');
     let color = 'Red';
-    if(team != 0) {
+    if(teamr != 0) {
       color = 'Blue';
     }
 
@@ -46,7 +46,7 @@ In Tic Tac Toe, users attempt to get 3 in a row of their symbol. The locations i
           text: resp
         });
     } else {
-      ttt({team: team, loc: loc, reset: reset, turn: turn, state: state}, function(err, result) {
+      ttt(team, loc, reset, turn, state, undefined, function(err, result) {
         callback(null, {
           response_type: 'in_channel',
           text: `(Tic Tac Toe) <@${user}>:${color} ` + result['text']

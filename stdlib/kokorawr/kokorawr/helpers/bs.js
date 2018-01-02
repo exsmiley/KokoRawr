@@ -145,7 +145,7 @@ reset();
 * @param {boolean} state gets the state of the board
 * @returns {object}
 */
-module.exports = function bs(team=0, x='C', y=5, reset=false, turn=false, state=false, context, callback) => {
+module.exports = function bs(team=0, x='C', y=5, reset=false, turn=false, state=false, context, callback) {
   // turn into integer
   xInd = xMap.indexOf(x);
 
@@ -154,9 +154,9 @@ module.exports = function bs(team=0, x='C', y=5, reset=false, turn=false, state=
     if(lastTeam == 0) {
       color = 'Blue';
     }
-    callback(null, {text: `It is ${color}'s turn!`, success: true});
+    return callback(null, {text: `It is ${color}'s turn!`, success: true});
   } else if(state) {
-    callback(null, {text: '\n'+boardToString(boards[team]), success: true});
+    return callback(null, {text: '\n'+boardToString(boards[team]), success: true});
   } else if(reset && gameOver) {
     reset();
     let color = 'Red';
@@ -164,20 +164,20 @@ module.exports = function bs(team=0, x='C', y=5, reset=false, turn=false, state=
       color = 'Blue';
     }
     tracker({post: true, store: {'name': 'bs', 'info': boards}}, function (err, result) {
-      callback(null, {text: `Successfully Reset! It is ${color}'s turn!`, success: true});
+      return callback(null, {text: `Successfully Reset! It is ${color}'s turn!`, success: true});
     });
   } else if(gameOver) {
-    callback(null, {text: `Game already over! The ${winner} team won.\n` + boardToString(boards[team]), success: false})
+    return callback(null, {text: `Game already over! The ${winner} team won.\n` + boardToString(boards[team]), success: false})
   } else if(reset) {
-    callback(null, {text: "Can't reset: game not over\n" + boardToString(boards[team]), success: false})
+    return callback(null, {text: "Can't reset: game not over\n" + boardToString(boards[team]), success: false})
   } else if(lastTeam == team) {
     let color = 'Red';
       if(team != 0) {
         color = 'Blue';
       }
-    callback(null, {text: `It is not ${color}'s turn.`, success: false})
+    return callback(null, {text: `It is not ${color}'s turn.`, success: false})
   } else if (boards[team][xInd][y] != '~'){
-    callback(null, {text: `Location ${x}${y} already marked!\n` + boardToString(boards[team]), success: false});
+    return callback(null, {text: `Location ${x}${y} already marked!\n` + boardToString(boards[team]), success: false});
   } else {
     let text = `shot at location ${x}${y}.`;
     let hit = isHit(xInd,y, boards[team], ships[lastTeam]);
@@ -199,11 +199,11 @@ module.exports = function bs(team=0, x='C', y=5, reset=false, turn=false, state=
       gameOver = true;
       winner = color;
       text += `\nThe ${color} team won!`
-      scores({post: true, store: {'name': 'bs', 'team': team}}, function (err, result) {});
+      scores(true, {'name': 'bs', 'team': team}, undefined, function (err, result) {});
     }
 
-    tracker({post: true, store: {'name': 'bs', 'info': boards}}, function (err, result) {
-      callback(null, {text: text, success: true});
+    tracker(true, {'name': 'bs', 'info': boards}, undefined, function (err, result) {
+      return callback(null, {text: text, success: true});
     });
   }
 

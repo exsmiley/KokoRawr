@@ -111,7 +111,7 @@ function boardToText(board) {
 * @param {boolean} state gets the state of the board
 * @returns {object}
 */
-module.exports = function c4(team=0, location=0, reset=false, turn=false, state=false, context, callback) => {
+module.exports = function c4(team=0, location=0, reset=false, turn=false, state=false, context, callback) {
   let json = {};
   let top = getTopLocation(location);
 
@@ -163,12 +163,12 @@ module.exports = function c4(team=0, location=0, reset=false, turn=false, state=
       }
       gameOver = true;
       json['text'] += `\n${teamName} won!`
-      scores({post: true, store: {'name': 'c4', 'team': team}}, function (err, result) {});
+      scores(true, {'name': 'c4', 'team': team}, undefined, function (err, result) {});
     } else if(checkTie(board)) {
       json['text'] += "\nIt's a tie!";
       gameOver = true;
     }
-    tracker({post: true, store: {'name': 'c4', 'info': board}}, function (err, result) {
+    tracker(true, {'name': 'c4', 'info': board}, undefined, function (err, result) {
       callback(null, json);
     });
   }

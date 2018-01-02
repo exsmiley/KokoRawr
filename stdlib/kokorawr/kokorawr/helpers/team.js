@@ -12,8 +12,8 @@ function hashCode(s) {
 * @param {string} name user who we are finding the name of
 * @returns {integer} number of team
 */
-module.exports = function teammaker(name = 'Bob', context, callback) => {
+module.exports = function team(name = 'Bob', context, callback) {
 
-    callback(null, Math.abs(hashCode(name)) % 2);
+    return callback(null, Math.abs(hashCode(name)) % 2);
 
 };

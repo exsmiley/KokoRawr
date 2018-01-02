@@ -1,4 +1,4 @@
-const teammaker = require('../../helpers/teammaker.js');
+const team = require('../../helpers/team.js');
 const rps = require('../../helpers/rps.js');
 
 /**
@@ -30,8 +30,8 @@ In this version of Rock Paper Scissors, users call the /rps command followed by 
           text: resp
         });
   } else {
-    teammaker({name: user}, function (err, team) {
-      rps({user: user, team: team, option: text}, function(err, result) {
+    team(user, undefined, function (err, teamr) {
+      rps(user, teamr, text, undefined, function(err, result) {
         callback(null, {
           response_type: 'in_channel',
           text: `(Rock Paper Scissors) ` + result

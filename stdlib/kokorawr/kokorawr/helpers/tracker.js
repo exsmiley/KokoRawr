@@ -7,15 +7,15 @@ gameInfo = {};
 * @param {object} store information to store. Format should be {name: str, info: gameInfo}
 * @returns {object}
 */
-module.exports = function tracker(post=false, store={}, context, callback) => {
+module.exports = function tracker(post=false, store={}, context, callback) {
   if(!post) {
-    callback(null, gameInfo);
+    return callback(null, gameInfo);
   } else {
     if('name' in store && 'info' in store) {
       gameInfo[store['name']] = store['info'];
-      callback(null, {'success': true});
+      return callback(null, {'success': true});
     } else {
-      callback(null, {'success': false});
+      return callback(null, {'success': false});
     }
   }
 };

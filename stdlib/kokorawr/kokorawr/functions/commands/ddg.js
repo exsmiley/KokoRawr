@@ -1,4 +1,4 @@
-const teammaker = require('../../helpers/teammaker.js');
+const team = require('../../helpers/team.js');
 const ddg = require('../../helpers/ddg.js');
 
 /**
@@ -14,10 +14,10 @@ const ddg = require('../../helpers/ddg.js');
 * @returns {object}
 */
 module.exports = (user, channel, text = '', command = {}, botToken = null, callback) => {
-  teammaker({name: user}, function (err, team) {
+  team(user, undefined, function (err, teamr) {
 
     let color = 'Red';
-    if(team != 0) {
+    if(teamr != 0) {
       color = 'Blue';
     }
     if(text === 'help') {
@@ -28,7 +28,7 @@ In this version of Duck Duck Goose, users simply call the /duck command and will
           text: resp
         });
     } else {
-      ddg({team: team}, function(err, result) {
+      ddg(teamr, undefined, function(err, result) {
         callback(null, {
           response_type: 'in_channel',
           text: `(Duck Duck Goose) <@${user}>:${color} ` + result

@@ -1,4 +1,4 @@
-const teammaker = require('../../helpers/teammaker.js');
+const team = require('../../helpers/team.js');
 const bs = require('../../helpers/bs.js');
 const xMap = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
 
@@ -15,14 +15,14 @@ const xMap = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
 * @returns {object}
 */
 module.exports = (user, channel, text = '', command = {}, botToken = null, callback) => {
-  teammaker({name: user}, function (err, team) {
+  team(user, undefined, function (err, teamr) {
 
     let reset = text.includes('reset');
     let turn = text.includes('turn');
     let state = text.includes('state');
     let help = text.includes('help');
     let color = 'Red';
-    if(team != 0) {
+    if(teamr != 0) {
       color = 'Blue';
     }
 
@@ -59,7 +59,7 @@ The first team to sink the other team's ships wins.`
           text: resp
         });
       } else {
-      bs({team: team, x: x, y: y, reset: reset, turn: turn, state: state}, function(err, result) {
+      bs(teamr, x, y, reset, turn, state, undefined, function(err, result) {
           callback(null, {
             response_type: 'in_channel',
             text: `(Battleship) <@${user}>:${color} ` + result['text']
