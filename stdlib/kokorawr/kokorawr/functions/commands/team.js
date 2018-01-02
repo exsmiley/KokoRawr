@@ -1,8 +1,4 @@
-const lib = require('lib')({token: process.env.STDLIB_TOKEN});
-
-function hashCode(s) {
-    return s.split("").reduce(function(a,b){a=((a<<5)-a)+b.charCodeAt(0);return a&a},0);              
-}
+const teammaker = require('../../helpers/teammaker.js');
 
 /**
 * /team
@@ -17,17 +13,24 @@ function hashCode(s) {
 * @returns {object}
 */
 module.exports = (user, channel, text = '', command = {}, botToken = null, callback) => {
+  teammaker({name: user}, function (err, result) {
 
-  let result = Math.abs(hashCode(name)) % 2;
+    if (err) {
+      // handle it
+      callback(err, null);
+    }
 
-  let color = 'Red';
-  if(result != 0) {
-    color = 'Blue';
-  }
+    let color = 'Red';
+    if(result != 0) {
+      color = 'Blue';
+    }
 
-  // do something with result
-  callback(null, {
-    response_type: 'in_channel',
-    text: `<@${user}> is on the ${color} team!`
+    // do something with result
+    callback(null, {
+      response_type: 'in_channel',
+      text: `<@${user}> is on the ${color} team!`
+    });
+
   });
+
 };
