@@ -1,37 +1,12 @@
-const tracker = require('./tracker.js');
+const lib = require('lib')({token: process.env.STDLIB_TOKEN});
 const scores = require('./scores.js');
 
 // initialize the board
 let numCols = 7;
 let numRows = 6;
-let board = [];
-let boardRow = [];
-
-// the last team to make a move
-let lastTeam = Math.round(Math.random());
-let gameOver = false;
-
-function resetBoard() {
-  board = [];
-  boardRow = [];
-  // cols for row
-  for(let i = 0; i < numCols; i++) {
-    boardRow.push('~');
-  }
-
-  // add each row to board
-  for(let i = 0; i < numRows; i++) {
-    board.push(boardRow.slice());
-  }
-  lastTeam = Math.round(Math.random());
-  gameOver = false;
-}
-
-resetBoard();
-
 
 // gets the highest unoccupied location for each piece
-function getTopLocation(location) {
+function getTopLocation(board, location) {
   let top = -1;
 
   for(let i = 0; i < numRows; i++) {
@@ -45,7 +20,7 @@ function getTopLocation(location) {
 
 // checks if a team has won the game
 // thanks based ferdelOlmo (https://stackoverflow.com/questions/32770321/connect-4-check-for-a-win-algorithm)
-function checkWin(player) {
+function checkWin(board, player) {
     // horizontalCheck 
     for (let j = 0; j<numCols-3 ; j++ ){
         for (let i = 0; i<numRows; i++){
@@ -112,8 +87,35 @@ function boardToText(board) {
 * @returns {object}
 */
 module.exports = (team=0, location=0, reset=false, turn=false, state=false, context, callback) => {
+  lib.utils.storage.get('c4', (err, c4) => {
+    if (err) {
+      c4 = {};
+    }
+    if (!c4.hasOwnProperty('board')) {
+      c4['board'] = [];
+      let boardRow = [];
+      // cols for row
+      for(let i = 0; i < 7; i++) {
+        boardRow.push('~');
+      }
+      // add each row to board
+      for(let i = 0; i < 6; i++) {
+        c4['board'].push(boardRow.slice());
+      }
+    }
+    if (!c4.hasOwnProperty('lastTeam')) {
+      c4['lastTeam'] = Math.round(Math.random());
+    }
+    if (!c4.hasOwnProperty('gameOver')) {
+      c4['gameOver'] = false;
+    }
+  })
+  let board = c4['board'];
+  let lastTeam = c4['lastTeam'];
+  let gameOver = c4['gameOver'];
+
   let json = {};
-  let top = getTopLocation(location);
+  let top = getTopLocation(board, location);
 
   if(turn) {
     let color = 'Red';
@@ -125,9 +127,9 @@ module.exports = (team=0, location=0, reset=false, turn=false, state=false, cont
     callback(null, {text: '\n'+boardToText(board), success: true});
   } else if(gameOver && reset) {
     json['success'] = true;
-    resetBoard()
-    json['text'] = 'Successfully reset the game!\n' + boardToText(board)
-    tracker({post: true, store: {'name': 'c4', 'info': board}}, function (err, result) {
+    c4 = {};
+    json['text'] = 'Successfully reset the game!\n' + boardToText(board);
+    lib.utils.storage.set('c4', c4, (err, result) => {
       callback(null, json);
     });
   } else if(reset) {
@@ -147,30 +149,29 @@ module.exports = (team=0, location=0, reset=false, turn=false, state=false, cont
     json['text'] = `No more pieces can be placed at location ${location}.\n` + boardToText(board)
     callback(null, json);
   } else {
-    lastTeam = team;
+    c4['lastTeam'] = team;
     json['success'] = true;
     let symbol = 'R';
     if(team != 0) {
       symbol = 'B';
     }
-    board[top][location-1] = symbol;
+    c4['board'][top][location-1] = symbol;
     json['text'] = ` played at location ${location}.\n` + boardToText(board);
 
-    if(checkWin(symbol)) {
+    if(checkWin(board, symbol)) {
       let teamName = 'Red';
       if(team != 0) {
         teamName = 'Blue';
       }
-      gameOver = true;
+      c4['gameOver'] = true;
       json['text'] += `\n${teamName} won!`
       scores(true, {'name': 'c4', 'team': team}, undefined, function (err, result) {});
     } else if(checkTie(board)) {
       json['text'] += "\nIt's a tie!";
-      gameOver = true;
+      c4['gameOver'] = true;
     }
-    tracker(true, {'name': 'c4', 'info': board}, undefined, function (err, result) {
+    lib.utils.storage.set('c4', c4, (err, result) => {
       callback(null, json);
     });
   }
-
 };

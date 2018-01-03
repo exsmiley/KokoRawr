@@ -1,8 +1,5 @@
-const tracker = require('./tracker.js');
+const lib = require('lib')({token: process.env.STDLIB_TOKEN});
 const scores = require('./scores.js');
-let marked = ['~', '~', '~', '~', '~', '~', '~', '~', '~'];
-let gameOver = false;
-let lastTeam = Math.round(Math.random());
 
 function markedToBoard(marked) {
 	let marked2 = [];
@@ -43,70 +40,86 @@ function isTie(marked, gameOver) {
 * @returns {object} {text: str, success: bool}
 */
 module.exports = (team, loc, reset=false, turn=false, state=false, context, callback) => {
-	if(turn) {
-	    let color = 'Red';
-	    if(lastTeam == 0) {
-	      color = 'Blue';
-	    }
-	    return callback(null, {text: `It is ${color}'s turn!`, success: true});
-  	} else if(state) {
-  		return callback(null, {text: '\n'+markedToBoard(marked), success: true});
-  	} else if(reset && gameOver) {
-		lastTeam = Math.round(Math.random());
-		gameOver = false;
-		marked = ['~', '~', '~', '~', '~', '~', '~', '~', '~'];
-		let color = 'Red';
-	    if(lastTeam == 0) {
-	      color = 'Blue';
-	    }
-	    tracker(true, {'name': 'ttt', 'info': marked}, undefined, function (err, result) {
-			return callback(null, {text: `Successfully Reset! It is ${color}'s turn!`, success: true});
-		});
-	} else if(gameOver) {
-		return callback(null, {text: 'Game already over\n' + markedToBoard(marked), success: false})
-	} else if(reset) {
-		return callback(null, {text: "Can't reset: game not over\n" + markedToBoard(marked), success: false})
-	} else if(lastTeam == team) {
-		let color = 'Red';
-	    if(team != 0) {
-	      color = 'Blue';
-	    }
-		return callback(null, {text: `It is not ${color}'s turn.`, success: false})
-	} else if (marked[loc-1] != '~'){
-		return callback(null, {text: `Location ${loc} already marked!\n` + markedToBoard(marked), success: false});
-	} else {
-		marked[loc-1] = team;
-		lastTeam = team;
+	lib.utils.storage.get('ttt', (err, ttt) => {
+		if (err) {
+			ttt = {};
+		}
+		if (!ttt.hasOwnProperty('marked')) {
+			ttt['marked'] = ['~', '~', '~', '~', '~', '~', '~', '~', '~'];
+		}
+		if (!ttt.hasOwnProperty('gameOver')) {
+			ttt['gameOver'] = false;
+		}
+		if (!ttt.hasOwnProperty('lastTeam')) {
+			ttt['lastTeam'] = Math.round(Math.random());
+		}
+		let marked = ttt['marked'];
+		let gameOver = ttt['gameOver'];
+		let lastTeam = ttt['lastTeam'];
 
-		marked[0] == marked[1] && marked[1] == marked[2] && marked[1] != '~' ? gameOver = true: "N/A";
-		marked[3] == marked[4] && marked[4] == marked[5] && marked[4] != '~' ? gameOver = true: "N/A";
-		marked[6] == marked[7] && marked[7] == marked[8] && marked[7] != '~' ? gameOver = true: "N/A";
+		if(turn) {
+		    let color = 'Red';
+		    if(lastTeam == 0) {
+		      color = 'Blue';
+		    }
+		    return callback(null, {text: `It is ${color}'s turn!`, success: true});
+	  	} else if(state) {
+	  		return callback(null, {text: '\n'+markedToBoard(marked), success: true});
+	  	} else if(reset && gameOver) {
+			ttt = {};
+			let color = 'Red';
+		    if(lastTeam == 0) {
+		      color = 'Blue';
+		    }
+		    lib.utils.storage.set('ttt', ttt, (err, ttt) => {
+		    	return callback(null, {text: `Successfully Reset! It is ${color}'s turn!`, success: true});
+		    });
+		} else if(gameOver) {
+			return callback(null, {text: 'Game already over\n' + markedToBoard(marked), success: false})
+		} else if(reset) {
+			return callback(null, {text: "Can't reset: game not over\n" + markedToBoard(marked), success: false})
+		} else if(lastTeam == team) {
+			let color = 'Red';
+		    if(team != 0) {
+		      color = 'Blue';
+		    }
+			return callback(null, {text: `It is not ${color}'s turn.`, success: false})
+		} else if (marked[loc-1] != '~'){
+			return callback(null, {text: `Location ${loc} already marked!\n` + markedToBoard(marked), success: false});
+		} else {
+			ttt['marked'][loc-1] = team;
+			ttt['lastTeam'] = team;
 
-		marked[0] == marked[3] && marked[3] == marked[6] && marked[3] != '~' ? gameOver = true: "N/A";
-		marked[1] == marked[4] && marked[4] == marked[7] && marked[4] != '~' ? gameOver = true: "N/A";
-		marked[2] == marked[5] && marked[5] == marked[8] && marked[5] != '~' ? gameOver = true: "N/A";
+			marked[0] == marked[1] && marked[1] == marked[2] && marked[1] != '~' ? gameOver = true: "N/A";
+			marked[3] == marked[4] && marked[4] == marked[5] && marked[4] != '~' ? gameOver = true: "N/A";
+			marked[6] == marked[7] && marked[7] == marked[8] && marked[7] != '~' ? gameOver = true: "N/A";
 
-		marked[0] == marked[4] && marked[4] == marked[8] && marked[4] != '~' ? gameOver = true: "N/A";
-		marked[2] == marked[4] && marked[4] == marked[6] && marked[4] != '~' ? gameOver = true: "N/A";
+			marked[0] == marked[3] && marked[3] == marked[6] && marked[3] != '~' ? gameOver = true: "N/A";
+			marked[1] == marked[4] && marked[4] == marked[7] && marked[4] != '~' ? gameOver = true: "N/A";
+			marked[2] == marked[5] && marked[5] == marked[8] && marked[5] != '~' ? gameOver = true: "N/A";
 
-		let color = 'Red';
-	    if(team != 0) {
-	      color = 'Blue';
-	    }
+			marked[0] == marked[4] && marked[4] == marked[8] && marked[4] != '~' ? gameOver = true: "N/A";
+			marked[2] == marked[4] && marked[4] == marked[6] && marked[4] != '~' ? gameOver = true: "N/A";
 
-	    let text = `played at location: ${loc}\n` + markedToBoard(marked);
-	    if(gameOver) {
-	    	text += `${color} won the game!`
-	    	scores(true, {'name': 'ttt', 'team': team}, undefined, function (err, result) {});
-	    }
+			let color = 'Red';
+		    if(team != 0) {
+		      color = 'Blue';
+		    }
 
-	    if(isTie(marked, gameOver)) {
-	    	gameOver = true;
-	    	text += 'Tie game!'
-	    }
+		    let text = `played at location: ${loc}\n` + markedToBoard(marked);
+		    if(gameOver) {
+		    	text += `${color} won the game!`
+		    	scores(true, {'name': 'ttt', 'team': team}, undefined, function (err, result) {});
+		    }
 
-	    tracker(true, {'name': 'ttt', 'info': marked}, undefined, function (err, result) {
-			return callback(null, {text: text, success: true});
-		});
-	}
+		    if(isTie(marked, gameOver)) {
+		    	ttt['gameOver'] = true;
+		    	text += 'Tie game!'
+		    }
+		    
+		    lib.utils.storage.set('ttt', ttt, (err, ttt) => {
+		    	return callback(null, {text: text, success: true});
+		    });
+		}
+	})
 };
