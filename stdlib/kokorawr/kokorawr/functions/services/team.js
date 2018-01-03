@@ -13,7 +13,5 @@ function hashCode(s) {
 * @returns {integer} number of team
 */
 module.exports = function team(name = 'Bob', context, callback) {
-
     return callback(null, Math.abs(hashCode(name)) % 2);
-
 };
