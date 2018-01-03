@@ -1,5 +1,5 @@
-const team = require('../../helpers/team.js');
-const rps = require('../../helpers/rps.js');
+const team = require('../services/team.js');
+const rps = require('../services/rps.js');
 
 /**
 * /rps

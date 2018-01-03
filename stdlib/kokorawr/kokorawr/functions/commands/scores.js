@@ -1,4 +1,4 @@
-const scores = require('../../helpers/scores.js');
+const scores = require('../services/scores.js');
 
 /**
 * /scores

@@ -1,5 +1,5 @@
-const team = require('../../helpers/team.js');
-const mm = require('../../helpers/mm.js');
+const team = require('../services/team.js');
+const mm = require('../services/mm.js');
 
 /**
 * /mind

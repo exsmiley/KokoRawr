@@ -1,5 +1,5 @@
-const team = require('../../helpers/team.js');
-const ddg = require('../../helpers/ddg.js');
+const team = require('../services/team.js');
+const ddg = require('../services/ddg.js');
 
 /**
 * /duck

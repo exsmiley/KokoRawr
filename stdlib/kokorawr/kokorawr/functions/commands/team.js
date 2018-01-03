@@ -1,4 +1,4 @@
-const team = require('../../helpers/team.js');
+const team = require('../services/team.js');
 
 /**
 * /team

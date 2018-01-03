@@ -1,5 +1,5 @@
-const team = require('../../helpers/team.js');
-const bs = require('../../helpers/bs.js');
+const team = require('../services/team.js');
+const bs = require('../services/bs.js');
 const xMap = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
 
 /**

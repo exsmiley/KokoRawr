@@ -1,5 +1,5 @@
-const team = require('../../helpers/team.js');
-const ttt = require('../../helpers/ttt.js');
+const team = require('../services/team.js');
+const ttt = require('../services/ttt.js');
 
 /**
 * /ttt
@@ -46,7 +46,7 @@ In Tic Tac Toe, users attempt to get 3 in a row of their symbol. The locations i
           text: resp
         });
     } else {
-      ttt(team, loc, reset, turn, state, undefined, function(err, result) {
+      ttt(teamr, loc, reset, turn, state, undefined, function(err, result) {
         callback(null, {
           response_type: 'in_channel',
           text: `(Tic Tac Toe) <@${user}>:${color} ` + result['text']

@@ -94,7 +94,7 @@ module.exports = function ttt(team, loc, reset=false, turn=false, state=false, c
 	      color = 'Blue';
 	    }
 
-	    let text = ` played at location: ${loc}\n` + markedToBoard(marked);
+	    let text = `played at location: ${loc}\n` + markedToBoard(marked);
 	    if(gameOver) {
 	    	text += `${color} won the game!`
 	    	scores(true, {'name': 'ttt', 'team': team}, undefined, function (err, result) {});
