@@ -27,11 +27,11 @@ Commands:
     valid input: location to place 1-7 (/c4 6), reset (/c4 reset), turn (/c4 turn), board state (/c4 state)
   - /bs lets you play Battleship
     valid input: coordinate to fire A0-J9 (/bs C5), reset (/bs reset), turn (/bs turn), board state (/bs state)
-  - /duck lets you know if you're a duck or a goose
+  - /ddg lets you know if you're a duck or a goose
   - /rps plays rock paper scissors with the other team
     valid input: rock, paper, or scissors: the choice is yours! (/rps rock)
-  - /mind plays Mastermind
-    valid input: a 4-digit number (/mind 0264)
+  - /mm plays Mastermind
+    valid input: a 4-digit number (/mm 0264)
 
 Games can be viewed at https://kokorawr.herokuapp.com/
 Thanks for playing KokoRawr!`;
