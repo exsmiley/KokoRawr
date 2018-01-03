@@ -9,7 +9,7 @@ function randInt(min, max) {
 * @param {integer} team the binary team you're on
 * @returns {string}
 */
-module.exports = function ddg(team, context, callback) {
+module.exports = (team, context, callback) => {
   let num = randInt(0, 3);
 
   if(num != 0) {

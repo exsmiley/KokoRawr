@@ -50,7 +50,7 @@ function calculateStats(guess, actual) {
 * @param {string} guess 4-digit number to guess
 * @returns {string}
 */
-module.exports = function mm(user='bob', team=0, guess='', context, callback) {
+module.exports = (user='bob', team=0, guess='', context, callback) => {
   if(guess.length != 4 || isNaN(parseInt(guess))) {
     return callback(null, `${guess} is not a 4-digit number`);
   } else if(storedNumber == null) {

@@ -111,7 +111,7 @@ function boardToText(board) {
 * @param {boolean} state gets the state of the board
 * @returns {object}
 */
-module.exports = function c4(team=0, location=0, reset=false, turn=false, state=false, context, callback) {
+module.exports = (team=0, location=0, reset=false, turn=false, state=false, context, callback) => {
   let json = {};
   let top = getTopLocation(location);
 

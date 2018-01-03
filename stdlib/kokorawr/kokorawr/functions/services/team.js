@@ -12,6 +12,6 @@ function hashCode(s) {
 * @param {string} name user who we are finding the name of
 * @returns {integer} number of team
 */
-module.exports = function team(name = 'Bob', context, callback) {
+module.exports = (name = 'Bob', context, callback) => {
     return callback(null, Math.abs(hashCode(name)) % 2);
 };

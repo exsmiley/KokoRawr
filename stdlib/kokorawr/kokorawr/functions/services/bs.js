@@ -145,7 +145,7 @@ reset();
 * @param {boolean} state gets the state of the board
 * @returns {object}
 */
-module.exports = function bs(team=0, x='C', y=5, reset=false, turn=false, state=false, context, callback) {
+module.exports = (team=0, x='C', y=5, reset=false, turn=false, state=false, context, callback) => {
   // turn into integer
   xInd = xMap.indexOf(x);
 

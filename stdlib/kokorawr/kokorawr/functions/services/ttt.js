@@ -42,7 +42,7 @@ function isTie(marked, gameOver) {
 * @param {boolean} state gets the state of the board
 * @returns {object} {text: str, success: bool}
 */
-module.exports = function ttt(team, loc, reset=false, turn=false, state=false, context, callback) {
+module.exports = (team, loc, reset=false, turn=false, state=false, context, callback) => {
 	if(turn) {
 	    let color = 'Red';
 	    if(lastTeam == 0) {

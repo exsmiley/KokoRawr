@@ -11,7 +11,7 @@ let options = ['rock', 'paper', 'scissors']
 * @param {string} option rock, paper, or scissors
 * @returns {string}
 */
-module.exports = function rps(user='Bob', team=1, option='rock', context, callback) {
+module.exports = (user='Bob', team=1, option='rock', context, callback) => {
 
   let index = options.indexOf(option.toLowerCase());
   let color = 'Red';

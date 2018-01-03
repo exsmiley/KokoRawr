@@ -7,7 +7,7 @@ gameInfo = {};
 * @param {object} store information to store. Format should be {name: str, info: gameInfo}
 * @returns {object}
 */
-module.exports = function tracker(post=false, store={}, context, callback) {
+module.exports = (post=false, store={}, context, callback) => {
   if(!post) {
     return callback(null, gameInfo);
   } else {
