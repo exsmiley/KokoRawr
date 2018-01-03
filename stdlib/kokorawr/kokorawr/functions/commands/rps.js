@@ -1,5 +1,4 @@
-const team = require('../services/team.js');
-const rps = require('../services/rps.js');
+const lib = require('lib')({token: process.env.STDLIB_TOKEN});
 
 /**
 * /rps
@@ -13,7 +12,7 @@ const rps = require('../services/rps.js');
 * @param {string} botToken The bot token for the Slack bot you have activated
 * @returns {object}
 */
-module.exports = (user, channel, text = '', command = {}, botToken = null, callback) => {
+module.exports = (user, channel, text = '', command = {}, botToken = null, context, callback) => {
   if(text[0] == 'r') {
     text = 'rock';
   } else if(text[0] == 'p') {
@@ -30,8 +29,8 @@ In this version of Rock Paper Scissors, users call the /rps command followed by 
           text: resp
         });
   } else {
-    team(user, undefined, function (err, teamr) {
-      rps(user, teamr, text, undefined, function(err, result) {
+    lib[`${context.service.identifier}.services.team`](user, undefined, function (err, teamr) {
+      lib[`${context.service.identifier}.services.rps`](user, teamr, text, undefined, function(err, result) {
         callback(null, {
           response_type: 'in_channel',
           text: `(Rock Paper Scissors) ` + result

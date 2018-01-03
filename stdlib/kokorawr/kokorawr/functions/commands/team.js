@@ -1,4 +1,4 @@
-const team = require('../services/team.js');
+const lib = require('lib')({token: process.env.STDLIB_TOKEN});
 
 /**
 * /team
@@ -12,8 +12,8 @@ const team = require('../services/team.js');
 * @param {string} botToken The bot token for the Slack bot you have activated
 * @returns {object}
 */
-module.exports = (user, channel, text = '', command = {}, botToken = null, callback) => {
-  team(user, undefined, function (err, teamr) {
+module.exports = (user, channel, text = '', command = {}, botToken = null, context, callback) => {
+  lib[`${context.service.identifier}.services.team`](user, undefined, function (err, teamr) {
 
     if (err) {
       // handle it

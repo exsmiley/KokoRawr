@@ -1,5 +1,4 @@
-const team = require('../services/team.js');
-const c4 = require('../services/c4.js');
+const lib = require('lib')({token: process.env.STDLIB_TOKEN});
 
 /**
 * /c4
@@ -13,9 +12,8 @@ const c4 = require('../services/c4.js');
 * @param {string} botToken The bot token for the Slack bot you have activated
 * @returns {object}
 */
-module.exports = (user, channel, text = '', command = {}, botToken = null, callback) => {
-  team(user, undefined, function (err, teamr) {
-
+module.exports = (user, channel, text = '', command = {}, botToken = null, context, callback) => {
+  lib[`${context.service.identifier}.services.team`](user, undefined, function (err, teamr) {
     let loc = parseInt(text);
     let reset = text.includes('reset');
     let turn = text.includes('turn');
@@ -47,7 +45,7 @@ In Connect 4, players take turns placing a piece in columns 1-7. Once a piece is
           text: resp
         });
     } else {
-      c4(teamr, loc, reset, turn, state, undefined, function(err, result) {
+      lib[`${context.service.identifier}.services.c4`](teamr, loc, reset, turn, state, undefined, function(err, result) {
         callback(null, {
           response_type: 'in_channel',
           text: `(Connect 4) <@${user}>:${color} ` + result['text']

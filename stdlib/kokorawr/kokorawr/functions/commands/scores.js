@@ -1,4 +1,4 @@
-const scores = require('../services/scores.js');
+const lib = require('lib')({token: process.env.STDLIB_TOKEN});
 
 /**
 * /scores
@@ -12,9 +12,9 @@ const scores = require('../services/scores.js');
 * @param {string} botToken The bot token for the Slack bot you have activated
 * @returns {object}
 */
-module.exports = (user, channel, text = '', command = {}, botToken = null, callback) => {
+module.exports = (user, channel, text = '', command = {}, botToken = null, context, callback) => {
   let resp = `Hi <@${user}>! Here are the current scores:`;
-  scores(false, undefined, undefined, function (err, result) {
+  lib[`${context.service.identifier}.services.scores`](false, undefined, undefined, function (err, result) {
     if(!result.hasOwnProperty('ttt')) {
       result['ttt'] = [0, 0]
     }

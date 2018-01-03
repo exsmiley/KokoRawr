@@ -1,5 +1,4 @@
-const team = require('../services/team.js');
-const ddg = require('../services/ddg.js');
+const lib = require('lib')({token: process.env.STDLIB_TOKEN});
 
 /**
 * /duck
@@ -13,8 +12,8 @@ const ddg = require('../services/ddg.js');
 * @param {string} botToken The bot token for the Slack bot you have activated
 * @returns {object}
 */
-module.exports = (user, channel, text = '', command = {}, botToken = null, callback) => {
-  team(user, undefined, function (err, teamr) {
+module.exports = (user, channel, text = '', command = {}, botToken = null, context, callback) => {
+  lib[`${context.service.identifier}.services.team`](user, undefined, function (err, teamr) {
 
     let color = 'Red';
     if(teamr != 0) {
@@ -28,7 +27,7 @@ In this version of Duck Duck Goose, users simply call the /duck command and will
           text: resp
         });
     } else {
-      ddg(teamr, undefined, function(err, result) {
+      lib[`${context.service.identifier}.services.ddg`](teamr, undefined, function(err, result) {
         callback(null, {
           response_type: 'in_channel',
           text: `(Duck Duck Goose) <@${user}>:${color} ` + result

@@ -1,5 +1,4 @@
-const team = require('../services/team.js');
-const mm = require('../services/mm.js');
+const lib = require('lib')({token: process.env.STDLIB_TOKEN});
 
 /**
 * /mind
@@ -13,8 +12,8 @@ const mm = require('../services/mm.js');
 * @param {string} botToken The bot token for the Slack bot you have activated
 * @returns {object}
 */
-module.exports = (user, channel, text = '', command = {}, botToken = null, callback) => {
-  team(user, undefined, function (err, teamr) {
+module.exports = (user, channel, text = '', command = {}, botToken = null, context, callback) => {
+  lib[`${context.service.identifier}.services.team`](user, undefined, function (err, teamr) {
 
     let color = 'Red';
     if(teamr != 0) {
@@ -33,7 +32,7 @@ The guesser wins when they guess the solution correctly!`
           text: resp
         });
     } else {
-      mm(user, teamr, text, undefined, function(err, result) {
+      lib[`${context.service.identifier}.services.mm`](user, teamr, text, undefined, function(err, result) {
         callback(null, {
           response_type: 'in_channel',
           text: `(Mastermind) <@${user}>:${color} ` + result
