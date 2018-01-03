@@ -88,7 +88,7 @@ function boardToText(board) {
 */
 module.exports = (team=0, location=0, reset=false, turn=false, state=false, context, callback) => {
   lib.utils.storage.get('c4', (err, c4) => {
-    if (err) {
+    if (err || rps == null) {
       c4 = {};
     }
     if (!c4.hasOwnProperty('board')) {

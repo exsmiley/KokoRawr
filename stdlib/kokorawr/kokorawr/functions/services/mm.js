@@ -49,7 +49,7 @@ function calculateStats(guess, actual) {
 */
 module.exports = (user='bob', team=0, guess='', context, callback) => {
   lib.utils.storage.get('mm', (err, mm) => {
-    if (err) {
+    if (err || rps == null) {
       mm =  {};
     }
     if (!mm.hasOwnProperty('storedUser')) {

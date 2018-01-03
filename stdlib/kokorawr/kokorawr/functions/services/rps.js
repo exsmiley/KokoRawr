@@ -10,7 +10,8 @@ const scores = require('./scores.js');
 */
 module.exports = (user='Bob', team=1, option='rock', context, callback) => {
   lib.utils.storage.get('rps', (err, rps) => {
-    if (err) {
+    console.log(rps)
+    if (err || rps == null) {
       rps = {};
     }
     if (!rps.hasOwnProperty('waiting')) {

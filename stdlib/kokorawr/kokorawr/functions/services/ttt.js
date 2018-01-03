@@ -41,7 +41,7 @@ function isTie(marked, gameOver) {
 */
 module.exports = (team, loc, reset=false, turn=false, state=false, context, callback) => {
 	lib.utils.storage.get('ttt', (err, ttt) => {
-		if (err) {
+		if (err || rps == null) {
 			ttt = {};
 		}
 		if (!ttt.hasOwnProperty('marked')) {
