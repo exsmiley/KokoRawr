@@ -10,7 +10,7 @@ module.exports = (post=false, store={}, context, callback) => {
   lib.utils.storage.get('scores', (err, scores) => {
     if (err) {
       utils.log.error("error with /scores command", new Error("Accepts error objects"), (err) => {
-        return callback(null, 'An error has occurred with your command'.);
+        return callback(null, 'An error has occurred with your command');
       });
     }
     if(scores == null) {

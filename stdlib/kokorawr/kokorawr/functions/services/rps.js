@@ -11,7 +11,7 @@ module.exports = (user='Bob', team=1, option='rock', context, callback) => {
   lib.utils.storage.get('rps', (err, gameInfo) => {
     if (err) {
       utils.log.error("error with /rps command", new Error("Accepts error objects"), (err) => {
-        return callback(null, 'An error has occurred with your command'.);
+        return callback(null, 'An error has occurred with your command');
       });
     }
     if (gameInfo == null) {

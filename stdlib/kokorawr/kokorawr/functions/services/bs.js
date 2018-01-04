@@ -130,7 +130,7 @@ module.exports = (team=0, x='C', y=5, reset=false, turn=false, state=false, cont
   lib.utils.storage.get('bs', (err, gameInfo) => {
     if (err) {
       utils.log.error("error with /bs command", new Error("Accepts error objects"), (err) => {
-        return callback(null, 'An error has occurred with your command'.);
+        return callback(null, 'An error has occurred with your command');
       });
     }
     if (gameInfo == null) {

@@ -44,7 +44,7 @@ module.exports = (team, loc, reset=false, turn=false, state=false, context, call
 	lib.utils.storage.get('ttt', (err, gameInfo) => {
 		if (err) {
 			utils.log.error("error with /ttt command", new Error("Accepts error objects"), (err) => {
-				return callback(null, 'An error has occurred with your command'.);
+				return callback(null, 'An error has occurred with your command');
 			});
 		}
 		if (gameInfo == null) {
