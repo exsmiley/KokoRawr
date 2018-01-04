@@ -49,7 +49,9 @@ function calculateStats(guess, actual) {
 module.exports = (user='bob', team=0, guess='', context, callback) => {
   lib.utils.storage.get('mm', (err, gameInfo) => {
     if (err) {
-      return callback(null, 'An error has occurred with your command.');
+      utils.log.error("error with /mm command", new Error("Accepts error objects"), (err) => {
+        return callback(null, 'An error has occurred with your command'.);
+      });
     }
     if (gameInfo == null) {
       gameInfo = {};

@@ -43,7 +43,9 @@ function isTie(marked, gameOver) {
 module.exports = (team, loc, reset=false, turn=false, state=false, context, callback) => {
 	lib.utils.storage.get('ttt', (err, gameInfo) => {
 		if (err) {
-			return callback(null, 'An error has occurred with your command');
+			utils.log.error("error with /ttt command", new Error("Accepts error objects"), (err) => {
+				return callback(null, 'An error has occurred with your command'.);
+			});
 		}
 		if (gameInfo == null) {
 			gameInfo = {};

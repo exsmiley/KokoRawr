@@ -129,7 +129,9 @@ function boardToString(board) {
 module.exports = (team=0, x='C', y=5, reset=false, turn=false, state=false, context, callback) => {
   lib.utils.storage.get('bs', (err, gameInfo) => {
     if (err) {
-      return callback(null, 'An error has occurred with your command.');
+      utils.log.error("error with /bs command", new Error("Accepts error objects"), (err) => {
+        return callback(null, 'An error has occurred with your command'.);
+      });
     }
     if (gameInfo == null) {
       gameInfo = {};

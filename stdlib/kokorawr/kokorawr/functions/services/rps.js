@@ -9,9 +9,10 @@ const lib = require('lib')({token: process.env.STDLIB_TOKEN});
 */
 module.exports = (user='Bob', team=1, option='rock', context, callback) => {
   lib.utils.storage.get('rps', (err, gameInfo) => {
-    console.log(gameInfo)
     if (err) {
-      return callback(null, 'An error has occurred with your command.');
+      utils.log.error("error with /rps command", new Error("Accepts error objects"), (err) => {
+        return callback(null, 'An error has occurred with your command'.);
+      });
     }
     if (gameInfo == null) {
       gameInfo = {};

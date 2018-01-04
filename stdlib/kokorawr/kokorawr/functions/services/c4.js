@@ -89,7 +89,9 @@ function boardToText(board) {
 module.exports = (team=0, location=0, reset=false, turn=false, state=false, context, callback) => {
   lib.utils.storage.get('c4', (err, gameInfo) => {
     if (err) {
-      return callback(null, 'An error has occurred with your command.');
+      utils.log.error("error with /c4 command", new Error("Accepts error objects"), (err) => {
+        return callback(null, 'An error has occurred with your command'.);
+      });
     }
     if (gameInfo == null) {
       gameInfo = {};
