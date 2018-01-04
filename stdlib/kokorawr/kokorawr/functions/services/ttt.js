@@ -1,5 +1,7 @@
 const lib = require('lib')({token: process.env.STDLIB_TOKEN});
 
+const EMPTY = '~';
+
 function markedToBoard(marked) {
 	let marked2 = [];
 	for(m of marked) {
@@ -8,7 +10,7 @@ function markedToBoard(marked) {
 		} else if(m == 1) {
 			marked2.push('B');
 		} else {
-			marked2.push('~');
+			marked2.push(EMPTY);
 		}
 	}
 	return `|${marked2[0]}${marked2[1]}${marked2[2]}|\n|${marked2[3]}${marked2[4]}${marked2[5]}|\n|${marked2[6]}${marked2[7]}${marked2[8]}|\n`
@@ -21,7 +23,7 @@ function isTie(marked, gameOver) {
 	} else {
 		let tie = true;
 		for(let i = 0; i < marked.length; i++) {
-			if(marked[i] == '~') {
+			if(marked[i] == EMPTY) {
 				tie = false;
 			}
 		}
@@ -47,7 +49,7 @@ module.exports = (team, loc, reset=false, turn=false, state=false, context, call
 			gameInfo = {};
 		}
 		if (!gameInfo.hasOwnProperty('marked')) {
-			gameInfo['marked'] = ['~', '~', '~', '~', '~', '~', '~', '~', '~'];
+			gameInfo['marked'] = [EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY];
 		}
 		if (!gameInfo.hasOwnProperty('gameOver')) {
 			gameInfo['gameOver'] = false;
@@ -86,7 +88,7 @@ module.exports = (team, loc, reset=false, turn=false, state=false, context, call
 		      color = 'Blue';
 		    }
 			return callback(null, {text: `It is not ${color}'s turn.`, success: false})
-		} else if (marked[loc-1] != '~'){
+		} else if (marked[loc-1] != EMPTY){
 			return callback(null, {text: `Location ${loc} already marked!\n` + markedToBoard(marked), success: false});
 		} else {
 			gameInfo['marked'][loc-1] = team;
@@ -95,7 +97,7 @@ module.exports = (team, loc, reset=false, turn=false, state=false, context, call
 			let winLoc = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], [2, 5, 8], [0, 4, 8], [2, 4, 6]]
 
 			for(loc in winLoc) {
-				if (gameInfo['marked'][loc[0]] == gameInfo['marked'][loc[1]] && gameInfo['marked'][loc[1]] == gameInfo['marked'][loc[2]] && gameInfo['marked'][1] != '~') {
+				if (gameInfo['marked'][loc[0]] == gameInfo['marked'][loc[1]] && gameInfo['marked'][loc[1]] == gameInfo['marked'][loc[2]] && gameInfo['marked'][1] != EMPTY) {
 					gameInfo['gameOver'] = true;
 				}
 			}

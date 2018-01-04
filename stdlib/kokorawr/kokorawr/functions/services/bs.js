@@ -2,6 +2,7 @@ const lib = require('lib')({token: process.env.STDLIB_TOKEN});
 
 let shipShapes = [5, 4, 3, 3, 2];
 const xMap = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
+const EMPTY = '~';
 
 function randInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -62,7 +63,7 @@ function generateBoard() {
   boardRow = [];
   // cols for row
   for(let i = 0; i < 10; i++) {
-    boardRow.push('~');
+    boardRow.push(EMPTY);
   }
 
   // add each row to board
@@ -102,7 +103,7 @@ function countSinks(ships) {
 }
 
 function boardToString(board) {
-  s = '~'
+  s = EMPTY
   for(let i=0; i < 10; i++) {
     s += i
   }
@@ -190,7 +191,7 @@ module.exports = (team=0, x='C', y=5, reset=false, turn=false, state=false, cont
           color = 'Blue';
         }
       return callback(null, {text: `It is not ${color}'s turn.`, success: false})
-    } else if (boards[team][xInd][y] != '~'){
+    } else if (boards[team][xInd][y] != EMPTY){
       return callback(null, {text: `Location ${x}${y} already marked!\n` + boardToString(boards[team]), success: false});
     } else {
       let text = `shot at location ${x}${y}.`;

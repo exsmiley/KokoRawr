@@ -3,13 +3,14 @@ const lib = require('lib')({token: process.env.STDLIB_TOKEN});
 // initialize the board
 let numCols = 7;
 let numRows = 6;
+const EMPTY = '~';
 
 // gets the highest unoccupied location for each piece
 function getTopLocation(board, location) {
   let top = -1;
 
   for(let i = 0; i < numRows; i++) {
-    if(board[i][location-1] == '~') {
+    if(board[i][location-1] == EMPTY) {
       top = i;
     }
   }
@@ -56,7 +57,7 @@ function checkWin(board, player) {
 function checkTie(board) {
   let tie = true;
   for(let i = 0; i < numCols; i++) {
-    if(board[0][i] == '~') {
+    if(board[0][i] == EMPTY) {
       tie = false;
     }
   }
@@ -98,7 +99,7 @@ module.exports = (team=0, location=0, reset=false, turn=false, state=false, cont
       let boardRow = [];
       // cols for row
       for(let i = 0; i < 7; i++) {
-        boardRow.push('~');
+        boardRow.push(EMPTY);
       }
       // add each row to board
       for(let i = 0; i < 6; i++) {
