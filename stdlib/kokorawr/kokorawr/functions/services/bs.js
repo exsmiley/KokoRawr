@@ -1,6 +1,7 @@
 const lib = require('lib')({token: process.env.STDLIB_TOKEN});
 
 let shipShapes = [5, 4, 3, 3, 2];
+const xMap = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
 
 function randInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -100,7 +101,7 @@ function countSinks(ships) {
   return count;
 }
 
-function boardToString(xMap, board) {
+function boardToString(board) {
   s = '~'
   for(let i=0; i < 10; i++) {
     s += i
@@ -125,40 +126,39 @@ function boardToString(xMap, board) {
 * @returns {object}
 */
 module.exports = (team=0, x='C', y=5, reset=false, turn=false, state=false, context, callback) => {
-  lib.utils.storage.get('bs', (err, bs) => {
+  lib.utils.storage.get('bs', (err, gameInfo) => {
     if (err) {
       return callback(null, 'An error has occurred with your command.');
     }
-    if (bs == null) {
-      bs = {};
+    if (gameInfo == null) {
+      gameInfo = {};
     }
-    if (!bs.hasOwnProperty('lastTeam')) {
-      bs['lastTeam'] = Math.round(Math.random());
+    if (!gameInfo.hasOwnProperty('lastTeam')) {
+      gameInfo['lastTeam'] = Math.round(Math.random());
     }
-    if (!bs.hasOwnProperty('winner')) {
-      bs['winner'] = 'mystery';
+    if (!gameInfo.hasOwnProperty('winner')) {
+      gameInfo['winner'] = 'mystery';
     }
-    if (!bs.hasOwnProperty('gameOver')) {
-      bs['gameOver'] = false;
+    if (!gameInfo.hasOwnProperty('gameOver')) {
+      gameInfo['gameOver'] = false;
     }
-    if (!bs.hasOwnProperty('ships')) {
-      bs['ships'] = {0: generateShips(), 1: generateShips()};;
+    if (!gameInfo.hasOwnProperty('ships')) {
+      gameInfo['ships'] = {0: generateShips(), 1: generateShips()};;
     }
-    if (!bs.hasOwnProperty('hitsLeft')) {
-      bs['hitsLeft'] = {0: shipShapes.slice(), 1: shipShapes.slice()};;
+    if (!gameInfo.hasOwnProperty('hitsLeft')) {
+      gameInfo['hitsLeft'] = {0: shipShapes.slice(), 1: shipShapes.slice()};;
     }
-    if (!bs.hasOwnProperty('boards')) {
-      bs['boards'] = [];
-      bs['boards'].push(generateBoard());
-      bs['boards'].push(generateBoard());
+    if (!gameInfo.hasOwnProperty('boards')) {
+      gameInfo['boards'] = [];
+      gameInfo['boards'].push(generateBoard());
+      gameInfo['boards'].push(generateBoard());
     }
-    let lastTeam = bs['lastTeam'];
-    let winner = bs['winner'];
-    let gameOver = bs['gameOver'];
-    const xMap = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
-    let ships = bs['ships'] // maps 0: shipLocations, 1: shipLocations
-    let hitsLeft = bs['hitsLeft']; // maps 0/1: array of ship lives left
-    let boards = bs['boards'];
+    let lastTeam = gameInfo['lastTeam'];
+    let winner = gameInfo['winner'];
+    let gameOver = gameInfo['gameOver'];
+    let ships = gameInfo['ships'] // maps 0: shipLocations, 1: shipLocations
+    let hitsLeft = gameInfo['hitsLeft']; // maps 0/1: array of ship lives left
+    let boards = gameInfo['boards'];
 
     // turn into integer
     xInd = xMap.indexOf(x);
@@ -170,20 +170,20 @@ module.exports = (team=0, x='C', y=5, reset=false, turn=false, state=false, cont
       }
       return callback(null, {text: `It is ${color}'s turn!`, success: true});
     } else if(state) {
-      return callback(null, {text: '\n'+boardToString(xMap, boards[team]), success: true});
+      return callback(null, {text: '\n'+boardToString(boards[team]), success: true});
     } else if(reset && gameOver) {
-      bs = {};
+      gameInfo = {};
       let color = 'Red';
       if(lastTeam == 0) {
         color = 'Blue';
       }
-      lib.utils.storage.set('bs', bs, (err, result) => {
+      lib.utils.storage.set('bs', gameInfo, (err, result) => {
         return callback(null, {text: `Successfully Reset! It is ${color}'s turn!`, success: true});
       });
     } else if(gameOver) {
-      return callback(null, {text: `Game already over! The ${winner} team won.\n` + boardToString(xMap, boards[team]), success: false})
+      return callback(null, {text: `Game already over! The ${winner} team won.\n` + boardToString(boards[team]), success: false})
     } else if(reset) {
-      return callback(null, {text: "Can't reset: game not over\n" + boardToString(xMap, boards[team]), success: false})
+      return callback(null, {text: "Can't reset: game not over\n" + boardToString(boards[team]), success: false})
     } else if(lastTeam == team) {
       let color = 'Red';
         if(team != 0) {
@@ -191,7 +191,7 @@ module.exports = (team=0, x='C', y=5, reset=false, turn=false, state=false, cont
         }
       return callback(null, {text: `It is not ${color}'s turn.`, success: false})
     } else if (boards[team][xInd][y] != '~'){
-      return callback(null, {text: `Location ${x}${y} already marked!\n` + boardToString(xMap, boards[team]), success: false});
+      return callback(null, {text: `Location ${x}${y} already marked!\n` + boardToString(boards[team]), success: false});
     } else {
       let text = `shot at location ${x}${y}.`;
       let hit = isHit(xInd,y, boards[team], ships[lastTeam], hitsLeft);
@@ -200,23 +200,23 @@ module.exports = (team=0, x='C', y=5, reset=false, turn=false, state=false, cont
       if(team != 0) {
         color = 'Blue';
       }
-      bs['lastTeam'] = team;
+      gameInfo['lastTeam'] = team;
       if(hit) {
         text += ' It was a hit!';
       } else {
         text += ' It was a miss :('
       }
 
-      text += `\nNumber of ships sunk: ${sunkCount}\n` + boardToString(xMap, boards[team]);
+      text += `\nNumber of ships sunk: ${sunkCount}\n` + boardToString(boards[team]);
 
       if(sunkCount == 5) {
-        bs['gameOver'] = true;
-        bs['winner'] = color;
+        gameInfo['gameOver'] = true;
+        gameInfo['winner'] = color;
         text += `\nThe ${color} team won!`
         lib[`${context.service.identifier}.services.scores`](true, {'name': 'bs', 'team': team}, undefined, function (err, result) {});
       }
 
-      lib.utils.storage.set('bs', bs, (err, result) => {
+      lib.utils.storage.set('bs', gameInfo, (err, result) => {
         return callback(null, {text: text, success: true});
       });
     }

@@ -8,26 +8,26 @@ const lib = require('lib')({token: process.env.STDLIB_TOKEN});
 * @returns {string}
 */
 module.exports = (user='Bob', team=1, option='rock', context, callback) => {
-  lib.utils.storage.get('rps', (err, rps) => {
-    console.log(rps)
+  lib.utils.storage.get('rps', (err, gameInfo) => {
+    console.log(gameInfo)
     if (err) {
       return callback(null, 'An error has occurred with your command.');
     }
-    if (rps == null) {
-      rps = {};
+    if (gameInfo == null) {
+      gameInfo = {};
     }
-    if (!rps.hasOwnProperty('waiting')) {
-      rps['waiting'] = [];
+    if (!gameInfo.hasOwnProperty('waiting')) {
+      gameInfo['waiting'] = [];
     }
-    if (!rps.hasOwnProperty('waitingTeam')) {
-      rps['waitingTeam'] = -1;
+    if (!gameInfo.hasOwnProperty('waitingTeam')) {
+      gameInfo['waitingTeam'] = -1;
     }
-    if (!rps.hasOwnProperty('options')) {
-      rps['options'] = ['rock', 'paper', 'scissors'];
+    if (!gameInfo.hasOwnProperty('options')) {
+      gameInfo['options'] = ['rock', 'paper', 'scissors'];
     }
-    let waiting = rps['waiting'];
-    let waitingTeam = rps['waitingTeam'];
-    let options = rps['options'];
+    let waiting = gameInfo['waiting'];
+    let waitingTeam = gameInfo['waitingTeam'];
+    let options = gameInfo['options'];
 
     let index = options.indexOf(option.toLowerCase());
     let color = 'Red';
@@ -42,9 +42,9 @@ module.exports = (user='Bob', team=1, option='rock', context, callback) => {
     } else if(waitingTeam == team || waitingTeam == -1) {
       // enque the user
       waiting.push([user, index]);
-      rps['waitingTeam'] = team;
-      rps['waiting'] = waiting;
-      lib.utils.storage.set('rps', rps, (err, result) => {
+      gameInfo['waitingTeam'] = team;
+      gameInfo['waiting'] = waiting;
+      lib.utils.storage.set('rps', gameInfo, (err, result) => {
         return callback(null, `<@${user}>:${color} is waiting for a match...`);
       })
     } else {
@@ -52,14 +52,14 @@ module.exports = (user='Bob', team=1, option='rock', context, callback) => {
       let other = waiting.shift();
       let otherTeam = waitingTeam+0;
       if(waiting.length == 0) {
-        rps['waitingTeam'] = -1;
+        gameInfo['waitingTeam'] = -1;
       }
-      rps['waiting'] = waiting;
+      gameInfo['waiting'] = waiting;
 
       let otherUser = other[0];
       let otherIndex = other[1];
 
-      lib.utils.storage.set('rps', rps, function (err, result) {});
+      lib.utils.storage.set('rps', gameInfo, function (err, result) {});
 
       if(index == otherIndex+1 || (index == 1 && otherIndex == 3)) {
         // user wins

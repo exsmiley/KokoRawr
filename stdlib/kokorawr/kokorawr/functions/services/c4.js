@@ -86,15 +86,15 @@ function boardToText(board) {
 * @returns {object}
 */
 module.exports = (team=0, location=0, reset=false, turn=false, state=false, context, callback) => {
-  lib.utils.storage.get('c4', (err, c4) => {
+  lib.utils.storage.get('c4', (err, gameInfo) => {
     if (err) {
       return callback(null, 'An error has occurred with your command.');
     }
-    if (c4 == null) {
-      c4 = {};
+    if (gameInfo == null) {
+      gameInfo = {};
     }
-    if (!c4.hasOwnProperty('board')) {
-      c4['board'] = [];
+    if (!gameInfo.hasOwnProperty('board')) {
+      gameInfo['board'] = [];
       let boardRow = [];
       // cols for row
       for(let i = 0; i < 7; i++) {
@@ -102,19 +102,19 @@ module.exports = (team=0, location=0, reset=false, turn=false, state=false, cont
       }
       // add each row to board
       for(let i = 0; i < 6; i++) {
-        c4['board'].push(boardRow.slice());
+        gameInfo['board'].push(boardRow.slice());
       }
     }
-    if (!c4.hasOwnProperty('lastTeam')) {
-      c4['lastTeam'] = Math.round(Math.random());
+    if (!gameInfo.hasOwnProperty('lastTeam')) {
+      gameInfo['lastTeam'] = Math.round(Math.random());
     }
-    if (!c4.hasOwnProperty('gameOver')) {
-      c4['gameOver'] = false;
+    if (!gameInfo.hasOwnProperty('gameOver')) {
+      gameInfo['gameOver'] = false;
     }
   })
-  let board = c4['board'];
-  let lastTeam = c4['lastTeam'];
-  let gameOver = c4['gameOver'];
+  let board = gameInfo['board'];
+  let lastTeam = gameInfo['lastTeam'];
+  let gameOver = gameInfo['gameOver'];
 
   let json = {};
   let top = getTopLocation(board, location);
@@ -129,9 +129,9 @@ module.exports = (team=0, location=0, reset=false, turn=false, state=false, cont
     callback(null, {text: '\n'+boardToText(board), success: true});
   } else if(gameOver && reset) {
     json['success'] = true;
-    c4 = {};
+    gameInfo = {};
     json['text'] = 'Successfully reset the game!\n' + boardToText(board);
-    lib.utils.storage.set('c4', c4, (err, result) => {
+    lib.utils.storage.set('c4', gameInfo, (err, result) => {
       callback(null, json);
     });
   } else if(reset) {
@@ -151,13 +151,13 @@ module.exports = (team=0, location=0, reset=false, turn=false, state=false, cont
     json['text'] = `No more pieces can be placed at location ${location}.\n` + boardToText(board)
     callback(null, json);
   } else {
-    c4['lastTeam'] = team;
+    gameInfo['lastTeam'] = team;
     json['success'] = true;
     let symbol = 'R';
     if(team != 0) {
       symbol = 'B';
     }
-    c4['board'][top][location-1] = symbol;
+    gameInfo['board'][top][location-1] = symbol;
     json['text'] = ` played at location ${location}.\n` + boardToText(board);
 
     if(checkWin(board, symbol)) {
@@ -165,14 +165,14 @@ module.exports = (team=0, location=0, reset=false, turn=false, state=false, cont
       if(team != 0) {
         teamName = 'Blue';
       }
-      c4['gameOver'] = true;
+      gameInfo['gameOver'] = true;
       json['text'] += `\n${teamName} won!`
       lib[`${context.service.identifier}.services.scores`](true, {'name': 'c4', 'team': team}, undefined, function (err, result) {});
     } else if(checkTie(board)) {
       json['text'] += "\nIt's a tie!";
-      c4['gameOver'] = true;
+      gameInfo['gameOver'] = true;
     }
-    lib.utils.storage.set('c4', c4, (err, result) => {
+    lib.utils.storage.set('c4', gameInfo, (err, result) => {
       callback(null, json);
     });
   }

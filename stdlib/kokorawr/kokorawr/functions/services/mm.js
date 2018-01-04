@@ -47,28 +47,28 @@ function calculateStats(guess, actual) {
 * @returns {string}
 */
 module.exports = (user='bob', team=0, guess='', context, callback) => {
-  lib.utils.storage.get('mm', (err, mm) => {
+  lib.utils.storage.get('mm', (err, gameInfo) => {
     if (err) {
       return callback(null, 'An error has occurred with your command.');
     }
-    if (mm == null) {
-      mm = {};
+    if (gameInfo == null) {
+      gameInfo = {};
     }
-    if (!mm.hasOwnProperty('storedUser')) {
-      mm['storedUser'] = null;
+    if (!gameInfo.hasOwnProperty('storedUser')) {
+      gameInfo['storedUser'] = null;
     }
-    if (!mm.hasOwnProperty('storedNumber')) {
-      mm['storedNumber'] = null;
+    if (!gameInfo.hasOwnProperty('storedNumber')) {
+      gameInfo['storedNumber'] = null;
     }
-    let storedUser = mm['storedUser'];
-    let storedNumber = mm['storedNumber'];
+    let storedUser = gameInfo['storedUser'];
+    let storedNumber = gameInfo['storedNumber'];
 
     if(guess.length != 4 || isNaN(parseInt(guess))) {
       return callback(null, `${guess} is not a 4-digit number`);
     } else if(storedNumber == null) {
-      mm['storedUser'] = user;
-      mm['storedNumber'] = guess;
-      lib.utils.storage.set('mm', mm, (err, result) => {
+      gameInfo['storedUser'] = user;
+      gameInfo['storedNumber'] = guess;
+      lib.utils.storage.set('mm', gameInfo, (err, result) => {
         return callback(null, `had a number selected as the number to guess!`);
       });
     } else if(user == storedUser) {
@@ -77,8 +77,8 @@ module.exports = (user='bob', team=0, guess='', context, callback) => {
       let pegs = calculateStats(guess, storedNumber);
       if(pegs[1] == 4) {
         // won the game
-        mm = {};
-        lib.utils.storage.set('mm', mm, (err, result) => {
+        gameInfo = {};
+        lib.utils.storage.set('mm', gameInfo, (err, result) => {
           lib[`${context.service.identifier}.services.scores`](true, {'name': 'mind', 'team': team}, undefined, function (err, result) {
             return callback(null, `correctly guessed the number ${guess}`);
           });
