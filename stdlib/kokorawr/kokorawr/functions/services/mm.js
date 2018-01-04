@@ -1,5 +1,4 @@
 const lib = require('lib')({token: process.env.STDLIB_TOKEN});
-const scores = require('./scores.js');
 
 function calculateStats(guess, actual) {
   countsGuess = {};
@@ -49,8 +48,11 @@ function calculateStats(guess, actual) {
 */
 module.exports = (user='bob', team=0, guess='', context, callback) => {
   lib.utils.storage.get('mm', (err, mm) => {
-    if (err || rps == null) {
-      mm =  {};
+    if (err) {
+      return callback(null, 'An error has occurred with your command.');
+    }
+    if (mm == null) {
+      mm = {};
     }
     if (!mm.hasOwnProperty('storedUser')) {
       mm['storedUser'] = null;
@@ -77,7 +79,7 @@ module.exports = (user='bob', team=0, guess='', context, callback) => {
         // won the game
         mm = {};
         lib.utils.storage.set('mm', mm, (err, result) => {
-          scores(true, {'name': 'mind', 'team': team}, undefined, function (err, result) {
+          lib[`${context.service.identifier}.services.scores`](true, {'name': 'mind', 'team': team}, undefined, function (err, result) {
             return callback(null, `correctly guessed the number ${guess}`);
           });
         });

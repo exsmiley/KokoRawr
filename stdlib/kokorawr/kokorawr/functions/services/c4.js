@@ -1,5 +1,4 @@
 const lib = require('lib')({token: process.env.STDLIB_TOKEN});
-const scores = require('./scores.js');
 
 // initialize the board
 let numCols = 7;
@@ -88,7 +87,10 @@ function boardToText(board) {
 */
 module.exports = (team=0, location=0, reset=false, turn=false, state=false, context, callback) => {
   lib.utils.storage.get('c4', (err, c4) => {
-    if (err || rps == null) {
+    if (err) {
+      return callback(null, 'An error has occurred with your command.');
+    }
+    if (c4 == null) {
       c4 = {};
     }
     if (!c4.hasOwnProperty('board')) {
@@ -165,7 +167,7 @@ module.exports = (team=0, location=0, reset=false, turn=false, state=false, cont
       }
       c4['gameOver'] = true;
       json['text'] += `\n${teamName} won!`
-      scores(true, {'name': 'c4', 'team': team}, undefined, function (err, result) {});
+      lib[`${context.service.identifier}.services.scores`](true, {'name': 'c4', 'team': team}, undefined, function (err, result) {});
     } else if(checkTie(board)) {
       json['text'] += "\nIt's a tie!";
       c4['gameOver'] = true;

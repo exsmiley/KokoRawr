@@ -1,5 +1,4 @@
 const lib = require('lib')({token: process.env.STDLIB_TOKEN});
-const scores = require('./scores.js');
 
 /**
 * Rock Paper Scissors!
@@ -11,7 +10,10 @@ const scores = require('./scores.js');
 module.exports = (user='Bob', team=1, option='rock', context, callback) => {
   lib.utils.storage.get('rps', (err, rps) => {
     console.log(rps)
-    if (err || rps == null) {
+    if (err) {
+      return callback(null, 'An error has occurred with your command.');
+    }
+    if (rps == null) {
       rps = {};
     }
     if (!rps.hasOwnProperty('waiting')) {
@@ -61,7 +63,7 @@ module.exports = (user='Bob', team=1, option='rock', context, callback) => {
 
       if(index == otherIndex+1 || (index == 1 && otherIndex == 3)) {
         // user wins
-        scores(true, {'name': 'rps', 'team': team}, undefined, function (err, result) {
+        lib[`${context.service.identifier}.services.scores`](true, {'name': 'rps', 'team': team}, undefined, function (err, result) {
           return callback(null, `<@${user}>:${color} beat <@${otherUser}>:${otherColor}'s ${options[otherIndex]} with ${options[index]}`);
         });
       } 
@@ -70,7 +72,7 @@ module.exports = (user='Bob', team=1, option='rock', context, callback) => {
         return callback(null, `<@${user}>:${color} and <@${otherUser}>:${otherColor} both chose ${options[index]}...`);
       } else {
         // other user wins
-        scores(true, {'name': 'rps', 'team': otherTeam}, undefined, function (err, result) {
+        lib[`${context.service.identifier}.services.scores`](true, {'name': 'rps', 'team': otherTeam}, undefined, function (err, result) {
           return callback(null, `<@${otherUser}>:${otherColor} beat <@${user}>:${color}'s ${options[index]} with ${options[otherIndex]}`);
         });
       }

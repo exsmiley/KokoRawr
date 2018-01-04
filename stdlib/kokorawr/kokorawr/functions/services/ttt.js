@@ -1,5 +1,4 @@
 const lib = require('lib')({token: process.env.STDLIB_TOKEN});
-const scores = require('./scores.js');
 
 function markedToBoard(marked) {
 	let marked2 = [];
@@ -41,7 +40,10 @@ function isTie(marked, gameOver) {
 */
 module.exports = (team, loc, reset=false, turn=false, state=false, context, callback) => {
 	lib.utils.storage.get('ttt', (err, ttt) => {
-		if (err || rps == null) {
+		if (err) {
+			return callback(null, 'An error has occurred with your command');
+		}
+		if (ttt == null) {
 			ttt = {};
 		}
 		if (!ttt.hasOwnProperty('marked')) {
@@ -109,7 +111,7 @@ module.exports = (team, loc, reset=false, turn=false, state=false, context, call
 		    let text = `played at location: ${loc}\n` + markedToBoard(marked);
 		    if(gameOver) {
 		    	text += `${color} won the game!`
-		    	scores(true, {'name': 'ttt', 'team': team}, undefined, function (err, result) {});
+		    	lib[`${context.service.identifier}.services.scores`](true, {'name': 'ttt', 'team': team}, undefined, function (err, result) {});
 		    }
 
 		    if(isTie(marked, gameOver)) {

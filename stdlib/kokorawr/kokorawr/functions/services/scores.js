@@ -8,7 +8,10 @@ const lib = require('lib')({token: process.env.STDLIB_TOKEN});
 */
 module.exports = (post=false, store={}, context, callback) => {
   lib.utils.storage.get('scores', (err, scores) => {
-    if(err) {
+    if (err) {
+      return callback(null, 'An error has occurred with your command.');
+    }
+    if(scores == null) {
       scores = {};
     }
     if(!post) {
