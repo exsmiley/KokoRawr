@@ -18,7 +18,7 @@ module.exports = (post=false, team, game, index=3, context, callback) => {
       });
     }
 
-    if(scores == 0) {
+    if(scores == null || scores == 0) {
       scores = {};
     }
     if(!post) {
