@@ -96,7 +96,7 @@ module.exports = (team, loc, reset=false, turn=false, state=false, context, call
 			gameInfo['marked'][loc-1] = team;
 			gameInfo['lastTeam'] = team;
 
-			let winLoc = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], [2, 5, 8], [0, 4, 8], [2, 4, 6]]
+			let winLoc = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], [2, 5, 8], [0, 4, 8], [2, 4, 6]];
 
 			for(loca in winLoc) {
 				if (gameInfo['marked'][loca[0]] == gameInfo['marked'][loca[1]] && gameInfo['marked'][loca[1]] == gameInfo['marked'][loca[2]] && gameInfo['marked'][1] != EMPTY) {

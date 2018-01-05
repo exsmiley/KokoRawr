@@ -44,37 +44,37 @@ module.exports = (user, team, option, context, callback) => {
       gameInfo['waitingTeam'] = team;
       gameInfo['waiting'] = waiting;
       lib.utils.storage.set('rps', gameInfo, (err, result) => {
-        return callback(null, `<@${user}>:${color} is waiting for a match...`);
+        return callback(null, `<@${user}>:${color} is waiting for a match...` + JSON.stringify(gameInfo));
       })
     } else {
       // deque and do the result
       let other = waiting.shift();
-      let otherTeam = waitingTeam+0;
+      let otherTeam = (team+1) % 2;
+      let otherUser = other[0];
+      let otherIndex = other[1];
+
       if(waiting.length == 0) {
         gameInfo['waitingTeam'] = -1;
       }
       gameInfo['waiting'] = waiting;
 
-      let otherUser = other[0];
-      let otherIndex = other[1];
-
-      lib.utils.storage.set('rps', gameInfo, function (err, result) {});
-
-      if(index == otherIndex+1 || (index == 1 && otherIndex == 3)) {
-        // user wins
-        lib[`${context.service.identifier}.services.scores`]({post: true, team: team, game: 'rps'}, function (err, result) {
-          return callback(null, `<@${user}>:${color} beat <@${otherUser}>:${otherColor}'s ${options[otherIndex]} with ${options[index]}`);
-        });
-      } 
-      else if(index == otherIndex) {
-        // tie
-        return callback(null, `<@${user}>:${color} and <@${otherUser}>:${otherColor} both chose ${options[index]}...`);
-      } else {
-        // other user wins
-        lib[`${context.service.identifier}.services.scores`]({post: true, team: otherTeam, game: 'rps'}, function (err, result) {
-          return callback(null, `<@${otherUser}>:${otherColor} beat <@${user}>:${color}'s ${options[index]} with ${options[otherIndex]}`);
-        });
-      }
+      lib.utils.storage.set('rps', gameInfo, function (err, result) {
+        if(index == otherIndex+1 || (index == 1 && otherIndex == 3)) {
+          // user wins
+          lib[`${context.service.identifier}.services.scores`]({post: true, team: team, game: 'rps'}, function (err, result) {
+            return callback(null, `<@${user}>:${color} beat <@${otherUser}>:${otherColor}'s ${options[otherIndex]} with ${options[index]}` + JSON.stringify(gameInfo));
+          });
+        } 
+        else if(index == otherIndex) {
+          // tie
+          return callback(null, `<@${user}>:${color} and <@${otherUser}>:${otherColor} both chose ${options[index]}...` + JSON.stringify(gameInfo));
+        } else {
+          // other user wins
+          lib[`${context.service.identifier}.services.scores`]({post: true, team: otherTeam, game: 'rps'}, function (err, result) {
+            return callback(null, `<@${otherUser}>:${otherColor} beat <@${user}>:${color}'s ${options[index]} with ${options[otherIndex]}` + JSON.stringify(gameInfo));
+          });
+        }
+      });
     }
   })
 };
