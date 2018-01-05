@@ -98,8 +98,8 @@ module.exports = (team, loc, reset=false, turn=false, state=false, context, call
 
 			let winLoc = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], [2, 5, 8], [0, 4, 8], [2, 4, 6]]
 
-			for(loc in winLoc) {
-				if (gameInfo['marked'][loc[0]] == gameInfo['marked'][loc[1]] && gameInfo['marked'][loc[1]] == gameInfo['marked'][loc[2]] && gameInfo['marked'][1] != EMPTY) {
+			for(loca in winLoc) {
+				if (gameInfo['marked'][loca[0]] == gameInfo['marked'][loca[1]] && gameInfo['marked'][loca[1]] == gameInfo['marked'][loca[2]] && gameInfo['marked'][1] != EMPTY) {
 					gameInfo['gameOver'] = true;
 				}
 			}
@@ -112,7 +112,7 @@ module.exports = (team, loc, reset=false, turn=false, state=false, context, call
 		    let text = `played at location: ${loc}\n` + markedToBoard(gameInfo['marked']);
 		    if(gameInfo['gameOver']) {
 		    	text += `${color} won the game!`
-		    	lib[`${context.service.identifier}.services.scores`](true, {'name': 'ttt', 'team': team}, undefined, function (err, result) {});
+		    	lib[`${context.service.identifier}.services.scores`](true, team, 'ttt', undefined, undefined, function (err, result) {});
 		    }
 
 		    if(isTie(gameInfo['marked'], gameInfo['gameOver'])) {

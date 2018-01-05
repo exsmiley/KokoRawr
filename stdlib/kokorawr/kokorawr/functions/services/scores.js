@@ -1,12 +1,16 @@
 const lib = require('lib')({token: process.env.STDLIB_TOKEN});
 
+const winInc = {'bs': 31, 'c4': 23, 'ddg': 1, 'mm': 37, 'rps': 3, 'ttt': 11}
+
 /**
 * Leaderboard information for teams!!!
 * @param {boolean} post if you're trying to store information
-* @param {object} store information to store. Format should be {name: str, info: gameInfo}
+* @param {integer} team which team should increase their score
+* @param {string} game which game was just played
+* param {integer} index which score to use
 * @returns {object} {<game_name>: [red_score, blue_score]}
 */
-module.exports = (post=false, store={}, context, callback) => {
+module.exports = (post=false, team, game, index=3, context, callback) => {
   lib.utils.storage.get('scores', (err, scores) => {
     if (err) {
       utils.log.error("error with /scores command", new Error("Accepts error objects"), (err) => {
@@ -19,21 +23,14 @@ module.exports = (post=false, store={}, context, callback) => {
     if(!post) {
       return callback(null, scores);
     } else {
-      if('name' in store && 'team' in store) {
-        if(!scores.hasOwnProperty(store['name'])) {
-          scores[store['name']] = [0, 0];
-        }
-        if('diff' in store) {
-          scores[store['name']][store['team']] += store['diff'];
-        } else {
-          scores[store['name']][store['team']]++;
-        }
-        lib.utils.storage.set('scores', scores, (err, scores) => {
-          return callback(null, {'success': true});
-        });
-      } else {
-        return callback(null, {'success': false, 'info': store});
+      if (!scores.hasOwnProperty(game)) {
+        scores[game] = [0,0];
       }
+      scores[game][team] += winInc[game]; 
+      
+      lib.utils.storage.set('scores', scores, (err, result) => {
+        return callback(null, {'success': true});
+      });
     }
   })
 };

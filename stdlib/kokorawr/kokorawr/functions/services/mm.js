@@ -81,7 +81,7 @@ module.exports = (user='bob', team=0, guess='', context, callback) => {
         // won the game
         gameInfo = {};
         lib.utils.storage.set('mm', gameInfo, (err, result) => {
-          lib[`${context.service.identifier}.services.scores`](true, {'name': 'mind', 'team': team}, undefined, function (err, result) {
+          lib[`${context.service.identifier}.services.scores`](true, team, 'mm', undefined, undefined, function (err, result) {
             return callback(null, `correctly guessed the number ${guess}`);
           });
         });

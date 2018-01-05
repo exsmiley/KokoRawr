@@ -1,5 +1,7 @@
 const lib = require('lib')({token: process.env.STDLIB_TOKEN});
 
+const options = ['rock', 'paper', 'scissors', 'r', 'p', 's'];
+
 /**
 * Rock Paper Scissors!
 * @param {string} user the user trying to perform the operation
@@ -7,7 +9,7 @@ const lib = require('lib')({token: process.env.STDLIB_TOKEN});
 * @param {string} option rock, paper, or scissors
 * @returns {string}
 */
-module.exports = (user='Bob', team=1, option='rock', context, callback) => {
+module.exports = (user, team, option, context, callback) => {
   lib.utils.storage.get('rps', (err, gameInfo) => {
     if (err) {
       utils.log.error("error with /rps command", new Error("Accepts error objects"), (err) => {
@@ -23,14 +25,10 @@ module.exports = (user='Bob', team=1, option='rock', context, callback) => {
     if (!gameInfo.hasOwnProperty('waitingTeam')) {
       gameInfo['waitingTeam'] = -1;
     }
-    if (!gameInfo.hasOwnProperty('options')) {
-      gameInfo['options'] = ['rock', 'paper', 'scissors'];
-    }
     let waiting = gameInfo['waiting'];
     let waitingTeam = gameInfo['waitingTeam'];
-    let options = gameInfo['options'];
 
-    let index = options.indexOf(option.toLowerCase());
+    let index = options.indexOf(option.toLowerCase()) % 3;
     let color = 'Red';
     let otherColor = 'Blue';
     if(team != 0) {
@@ -64,7 +62,7 @@ module.exports = (user='Bob', team=1, option='rock', context, callback) => {
 
       if(index == otherIndex+1 || (index == 1 && otherIndex == 3)) {
         // user wins
-        lib[`${context.service.identifier}.services.scores`](true, {'name': 'rps', 'team': team}, undefined, function (err, result) {
+        lib[`${context.service.identifier}.services.scores`]({post: true, team: team, game: 'rps'}, function (err, result) {
           return callback(null, `<@${user}>:${color} beat <@${otherUser}>:${otherColor}'s ${options[otherIndex]} with ${options[index]}`);
         });
       } 
@@ -73,7 +71,7 @@ module.exports = (user='Bob', team=1, option='rock', context, callback) => {
         return callback(null, `<@${user}>:${color} and <@${otherUser}>:${otherColor} both chose ${options[index]}...`);
       } else {
         // other user wins
-        lib[`${context.service.identifier}.services.scores`](true, {'name': 'rps', 'team': otherTeam}, undefined, function (err, result) {
+        lib[`${context.service.identifier}.services.scores`]({post: true, team: otherTeam, game: 'rps'}, function (err, result) {
           return callback(null, `<@${otherUser}>:${otherColor} beat <@${user}>:${color}'s ${options[index]} with ${options[otherIndex]}`);
         });
       }

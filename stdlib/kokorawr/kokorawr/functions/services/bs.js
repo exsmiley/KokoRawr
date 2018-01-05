@@ -216,7 +216,7 @@ module.exports = (team=0, x='C', y=5, reset=false, turn=false, state=false, cont
         gameInfo['gameOver'] = true;
         gameInfo['winner'] = color;
         text += `\nThe ${color} team won!`
-        lib[`${context.service.identifier}.services.scores`](true, {'name': 'bs', 'team': team}, undefined, function (err, result) {});
+        lib[`${context.service.identifier}.services.scores`](true, team, 'bs', undefined, undefined, function (err, result) {});
       }
 
       lib.utils.storage.set('bs', gameInfo, (err, result) => {
