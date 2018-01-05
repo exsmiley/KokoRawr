@@ -44,7 +44,7 @@ module.exports = (user, team, option, context, callback) => {
       gameInfo['waitingTeam'] = team;
       gameInfo['waiting'] = waiting;
       lib.utils.storage.set('rps', gameInfo, (err, result) => {
-        return callback(null, `<@${user}>:${color} is waiting for a match...` + JSON.stringify(gameInfo));
+        return callback(null, `<@${user}>:${color} is waiting for a match...`);
       })
     } else {
       // deque and do the result
@@ -62,16 +62,16 @@ module.exports = (user, team, option, context, callback) => {
         if(index == otherIndex+1 || (index == 1 && otherIndex == 3)) {
           // user wins
           lib[`${context.service.identifier}.services.scores`]({post: true, team: team, game: 'rps'}, function (err, result) {
-            return callback(null, `<@${user}>:${color} beat <@${otherUser}>:${otherColor}'s ${options[otherIndex]} with ${options[index]}` + JSON.stringify(gameInfo));
+            return callback(null, `<@${user}>:${color} beat <@${otherUser}>:${otherColor}'s ${options[otherIndex]} with ${options[index]}`);
           });
         } 
         else if(index == otherIndex) {
           // tie
-          return callback(null, `<@${user}>:${color} and <@${otherUser}>:${otherColor} both chose ${options[index]}...` + JSON.stringify(gameInfo));
+          return callback(null, `<@${user}>:${color} and <@${otherUser}>:${otherColor} both chose ${options[index]}.`);
         } else {
           // other user wins
           lib[`${context.service.identifier}.services.scores`]({post: true, team: otherTeam, game: 'rps'}, function (err, result) {
-            return callback(null, `<@${otherUser}>:${otherColor} beat <@${user}>:${color}'s ${options[index]} with ${options[otherIndex]}` + JSON.stringify(gameInfo));
+            return callback(null, `<@${otherUser}>:${otherColor} beat <@${user}>:${color}'s ${options[index]} with ${options[otherIndex]}`);
           });
         }
       });
