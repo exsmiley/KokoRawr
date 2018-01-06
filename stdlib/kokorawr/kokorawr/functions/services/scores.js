@@ -23,7 +23,6 @@ module.exports = (post=false, team=0, game='ddg', pointIndex=3, context, callbac
   
   // return callback(null, reset());
 
-
   lib.utils.storage.get('scores', (err, scores) => {
     if (err) {
       utils.log.error("error with /scores command", new Error("Accepts error objects"), (err) => {
