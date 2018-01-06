@@ -45,7 +45,7 @@ In Connect 4, players take turns placing a piece in columns 1-7. Once a piece is
           text: resp
         });
     } else {
-      lib[`${context.service.identifier}.services.c4`]({team: teamr, loc: loc, reset: reset, turn: turn, state: state}, function(err, result) {
+      lib[`${context.service.identifier}.services.c4`]({team: teamr, location: loc, reset: reset, turn: turn, state: state}, function(err, result) {
         callback(null, {
           response_type: 'in_channel',
           text: `(Connect 4) <@${user}>:${color} ` + result['text']

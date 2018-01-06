@@ -1,6 +1,7 @@
 const lib = require('lib')({token: process.env.STDLIB_TOKEN});
 
 const pointInc = {'bs': 31, 'c4': 23, 'ddg': [1, -5], 'mm': 37, 'rps': 3, 'ttt': 11};
+const NO_INCREMENT = 3;
 
 // ~~~~~~~~ FOR DEBUGGING PURPOSES ONLY ~~~~~~~~
 // function reset() {
@@ -37,7 +38,7 @@ module.exports = (post=false, team=0, game='ddg', pointIndex=3, context, callbac
       if (!scores.hasOwnProperty(game)) {
         scores[game] = [0,0];
       }
-      if (pointIndex != 3) {
+      if (pointIndex != NO_INCREMENT) {
         scores[game][team] += pointInc[game][pointIndex]; 
       } else {
         scores[game][team] += pointInc[game]; 
