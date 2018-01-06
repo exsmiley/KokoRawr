@@ -2,14 +2,15 @@ const lib = require('lib')({token: process.env.STDLIB_TOKEN});
 
 const pointInc = {'bs': 31, 'c4': 23, 'ddg': [1, -5], 'mm': 37, 'rps': 3, 'ttt': 11};
 
-function reset() {
-  reset = {};
-  lib.utils.storage.set('scores', reset, (err, scores) => {
-    lib.utils.storage.get('scores', (err, s) => {
-      return s;
-    });
-  });
-}
+// ~~~~~~~~ FOR DEBUGGING PURPOSES ONLY ~~~~~~~~
+// function reset() {
+//   reset = {};
+//   lib.utils.storage.set('scores', reset, (err, scores) => {
+//     lib.utils.storage.get('scores', (err, s) => {
+//       return s;
+//     });
+//   });
+// }
 
 /**
 * Leaderboard information for teams!!!
@@ -20,9 +21,6 @@ function reset() {
 * @returns {object} {<game_name>: [red_score, blue_score]}
 */
 module.exports = (post=false, team=0, game='ddg', pointIndex=3, context, callback) => {
-  
-  // return callback(null, reset());
-
   lib.utils.storage.get('scores', (err, scores) => {
     if (err) {
       utils.log.error("error with /scores command", new Error("Accepts error objects"), (err) => {
