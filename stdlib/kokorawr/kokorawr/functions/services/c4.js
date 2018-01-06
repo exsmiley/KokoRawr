@@ -169,7 +169,7 @@ module.exports = (team=0, location=0, reset=false, turn=false, state=false, cont
         }
         gameInfo['gameOver'] = true;
         json['text'] += `\n${teamName} won!`
-        lib[`${context.service.identifier}.services.scores`](true, team, 'c4', undefined, undefined, function (err, result) {});
+        lib[`${context.service.identifier}.services.scores`]({post: true, team: team, game: 'c4'}, function (err, result) {});
       } else if(checkTie(board)) {
         json['text'] += "\nIt's a tie!";
         gameInfo['gameOver'] = true;

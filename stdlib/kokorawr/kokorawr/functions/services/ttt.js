@@ -40,7 +40,7 @@ function isTie(marked, gameOver) {
 * @param {boolean} state gets the state of the board
 * @returns {object} {text: str, success: bool}
 */
-module.exports = (team, loc, reset=false, turn=false, state=false, context, callback) => {
+module.exports = (team=0, loc=0, reset=false, turn=false, state=false, context, callback) => {
 	lib.utils.storage.get('ttt', (err, gameInfo) => {
 		if (err) {
 			utils.log.error("error with /ttt command", new Error("Accepts error objects"), (err) => {
@@ -112,7 +112,7 @@ module.exports = (team, loc, reset=false, turn=false, state=false, context, call
 		    let text = `played at location: ${loc}\n` + markedToBoard(gameInfo['marked']);
 		    if(gameInfo['gameOver']) {
 		    	text += `${color} won the game!`
-		    	lib[`${context.service.identifier}.services.scores`](true, team, 'ttt', undefined, undefined, function (err, result) {});
+		    	lib[`${context.service.identifier}.services.scores`]({post: true, team: team, game: 'ttt'}, function (err, result) {});
 		    }
 
 		    if(isTie(gameInfo['marked'], gameInfo['gameOver'])) {

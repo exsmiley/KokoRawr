@@ -9,7 +9,7 @@ const options = ['rock', 'paper', 'scissors', 'r', 'p', 's'];
 * @param {string} option rock, paper, or scissors
 * @returns {string}
 */
-module.exports = (user, team, option, context, callback) => {
+module.exports = (user='bob', team=0, option='r', context, callback) => {
   lib.utils.storage.get('rps', (err, gameInfo) => {
     if (err) {
       utils.log.error("error with /rps command", new Error("Accepts error objects"), (err) => {

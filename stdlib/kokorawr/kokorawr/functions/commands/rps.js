@@ -21,8 +21,8 @@ In this version of Rock Paper Scissors, users call the /rps command followed by 
           text: resp
         });
   } else {
-    lib[`${context.service.identifier}.services.team`](user, undefined, function (err, teamr) {
-      lib[`${context.service.identifier}.services.rps`](user, teamr, text, undefined, function(err, result) {
+    lib[`${context.service.identifier}.services.team`]({name: user}, function (err, teamr) {
+      lib[`${context.service.identifier}.services.rps`]({user: user, team: teamr, option: text}, function(err, result) {
         callback(null, {
           response_type: 'in_channel',
           text: `(Rock Paper Scissors) ` + result

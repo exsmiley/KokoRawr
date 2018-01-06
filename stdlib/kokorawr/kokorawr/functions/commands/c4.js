@@ -13,7 +13,7 @@ const lib = require('lib')({token: process.env.STDLIB_TOKEN});
 * @returns {object}
 */
 module.exports = (user, channel, text = '', command = {}, botToken = null, context, callback) => {
-  lib[`${context.service.identifier}.services.team`](user, undefined, function (err, teamr) {
+  lib[`${context.service.identifier}.services.team`]({name: user}, function (err, teamr) {
     let loc = parseInt(text);
     let reset = text.includes('reset');
     let turn = text.includes('turn');
@@ -45,7 +45,7 @@ In Connect 4, players take turns placing a piece in columns 1-7. Once a piece is
           text: resp
         });
     } else {
-      lib[`${context.service.identifier}.services.c4`](teamr, loc, reset, turn, state, undefined, function(err, result) {
+      lib[`${context.service.identifier}.services.c4`]({team: teamr, loc: loc, reset: reset, turn: turn, state: state}, function(err, result) {
         callback(null, {
           response_type: 'in_channel',
           text: `(Connect 4) <@${user}>:${color} ` + result['text']

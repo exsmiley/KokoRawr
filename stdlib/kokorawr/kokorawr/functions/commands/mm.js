@@ -13,7 +13,7 @@ const lib = require('lib')({token: process.env.STDLIB_TOKEN});
 * @returns {object}
 */
 module.exports = (user, channel, text = '', command = {}, botToken = null, context, callback) => {
-  lib[`${context.service.identifier}.services.team`](user, undefined, function (err, teamr) {
+  lib[`${context.service.identifier}.services.team`]({name: user}, function (err, teamr) {
 
     let color = 'Red';
     if(teamr != 0) {
@@ -32,7 +32,7 @@ The guesser wins when they guess the solution correctly!`
           text: resp
         });
     } else {
-      lib[`${context.service.identifier}.services.mm`](user, teamr, text, undefined, function(err, result) {
+      lib[`${context.service.identifier}.services.mm`]({user: user, team: teamr, guess: text}, function(err, result) {
         callback(null, {
           response_type: 'in_channel',
           text: `(Mastermind) <@${user}>:${color} ` + result

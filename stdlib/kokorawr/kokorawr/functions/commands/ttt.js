@@ -13,7 +13,7 @@ const lib = require('lib')({token: process.env.STDLIB_TOKEN});
 * @returns {object}
 */
 module.exports = (user, channel, text = '', command = {}, botToken = null, context, callback) => {
-  lib[`${context.service.identifier}.services.team`](user, undefined, function (err, teamr) {
+  lib[`${context.service.identifier}.services.team`]({name: user}, function (err, teamr) {
 
     let loc = parseInt(text);
     let turn = text.includes('turn');
@@ -45,7 +45,7 @@ In Tic Tac Toe, users attempt to get 3 in a row of their symbol. The locations i
           text: resp
         });
     } else {
-      lib[`${context.service.identifier}.services.ttt`](teamr, loc, reset, turn, state, undefined, function(err, result) {
+      lib[`${context.service.identifier}.services.ttt`]({team: teamr, loc: loc, reset: reset, turn: turn, state: state}, function(err, result) {
         callback(null, {
           response_type: 'in_channel',
           text: `(Tic Tac Toe) <@${user}>:${color} ` + result['text']
