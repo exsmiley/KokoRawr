@@ -2,6 +2,15 @@ const lib = require('lib')({token: process.env.STDLIB_TOKEN});
 
 const pointInc = {'bs': 31, 'c4': 23, 'ddg': [1, -5], 'mm': 37, 'rps': 3, 'ttt': 11};
 
+function reset() {
+  reset = {};
+  lib.utils.storage.set('scores', reset, (err, scores) => {
+    lib.utils.storage.get('scores', (err, s) => {
+      return s;
+    });
+  });
+}
+
 /**
 * Leaderboard information for teams!!!
 * @param {boolean} post if you're trying to store information
@@ -11,6 +20,10 @@ const pointInc = {'bs': 31, 'c4': 23, 'ddg': [1, -5], 'mm': 37, 'rps': 3, 'ttt':
 * @returns {object} {<game_name>: [red_score, blue_score]}
 */
 module.exports = (post=false, team=0, game='ddg', pointIndex=3, context, callback) => {
+  
+  // return callback(null, reset());
+
+
   lib.utils.storage.get('scores', (err, scores) => {
     if (err) {
       utils.log.error("error with /scores command", new Error("Accepts error objects"), (err) => {
@@ -27,7 +40,7 @@ module.exports = (post=false, team=0, game='ddg', pointIndex=3, context, callbac
       if (!scores.hasOwnProperty(game)) {
         scores[game] = [0,0];
       }
-      if (pointIndex != -1) {
+      if (pointIndex != 3) {
         scores[game][team] += pointInc[game][pointIndex]; 
       } else {
         scores[game][team] += pointInc[game]; 
