@@ -36,6 +36,9 @@ function calculateStats(guess, actual) {
     }
   }
 
+  // make it mirror the actual game
+  pegs[0] -= pegs[1]
+
   return pegs
 }
 
