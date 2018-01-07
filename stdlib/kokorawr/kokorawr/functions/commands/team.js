@@ -13,7 +13,7 @@ const lib = require('lib')({token: process.env.STDLIB_TOKEN});
 * @returns {object}
 */
 module.exports = (user, channel, text = '', command = {}, botToken = null, context, callback) => {
-  lib[`${context.service.identifier}.services.team`](user, undefined, function (err, teamr) {
+  lib[`${context.service.identifier}.services.team`]({name: user}, function (err, teamr) {
 
     if (err) {
       // handle it

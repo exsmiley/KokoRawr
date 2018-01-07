@@ -1,8 +1,4 @@
-const scores = require('./scores.js');
-
-let storedUser = null;
-let storedNumber = null;
-
+const lib = require('lib')({token: process.env.STDLIB_TOKEN});
 
 function calculateStats(guess, actual) {
   countsGuess = {};
@@ -51,26 +47,48 @@ function calculateStats(guess, actual) {
 * @returns {string}
 */
 module.exports = (user='bob', team=0, guess='', context, callback) => {
-  if(guess.length != 4 || isNaN(parseInt(guess))) {
-    return callback(null, `${guess} is not a 4-digit number`);
-  } else if(storedNumber == null) {
-    storedUser = user;
-    storedNumber = guess;
-    return callback(null, `had a number selected as the number to guess!`);
-  } else if(user == storedUser) {
-    return callback(null, `is not supposed to try guessing his/her own number!`);
-  } else {
-    let pegs = calculateStats(guess, storedNumber);
-    if(pegs[1] == 4) {
-      // won the game
-      storedNumber = null;
-      storedUser = null;
-      scores(true, {'name': 'mind', 'team': team}, undefined, function (err, result) {
-        return callback(null, `correctly guessed the number ${guess}`);
+  lib.utils.storage.get('mm', (err, gameInfo) => {
+    if (err) {
+      utils.log.error("error with /mm command", new Error("Accepts error objects"), (err) => {
+        return callback(null, 'An error has occurred with your command');
       });
-    } else {
-      // continue playing
-      return callback(null, `guessed ${guess} and got ${pegs[0]} white pegs and ${pegs[1]} red pegs!`);
     }
-  }
+    if (gameInfo == null || gameInfo == 0) {
+      gameInfo = {};
+    }
+    if (!gameInfo.hasOwnProperty('storedUser')) {
+      gameInfo['storedUser'] = null;
+    }
+    if (!gameInfo.hasOwnProperty('storedNumber')) {
+      gameInfo['storedNumber'] = null;
+    }
+    let storedUser = gameInfo['storedUser'];
+    let storedNumber = gameInfo['storedNumber'];
+
+    if(guess.length != 4 || isNaN(parseInt(guess))) {
+      return callback(null, `${guess} is not a 4-digit number`);
+    } else if(storedNumber == null) {
+      gameInfo['storedUser'] = user;
+      gameInfo['storedNumber'] = guess;
+      lib.utils.storage.set('mm', gameInfo, (err, result) => {
+        return callback(null, `had a number selected as the number to guess!`);
+      });
+    } else if(user == storedUser) {
+      return callback(null, `is not supposed to try guessing his/her own number!`);
+    } else {
+      let pegs = calculateStats(guess, storedNumber);
+      if(pegs[1] == 4) {
+        // won the game
+        gameInfo = 0;
+        lib.utils.storage.set('mm', gameInfo, (err, result) => {
+          lib[`${context.service.identifier}.services.scores`]({post: true, team: team, game: 'mm'}, function (err, result) {
+            return callback(null, `correctly guessed the number ${guess}`);
+          });
+        });
+      } else {
+        // continue playing
+        return callback(null, `guessed ${guess} and got ${pegs[0]} white pegs and ${pegs[1]} red pegs!`);
+      }
+    }
+  })
 };

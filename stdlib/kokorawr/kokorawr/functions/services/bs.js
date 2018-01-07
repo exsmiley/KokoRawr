@@ -1,15 +1,8 @@
-const tracker = require('./tracker.js');
-const scores = require('./scores.js');
+const lib = require('lib')({token: process.env.STDLIB_TOKEN});
 
-// params
-let lastTeam = 0;
-let winner = 'mystery';
-let gameOver = false;
-const xMap = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
 let shipShapes = [5, 4, 3, 3, 2];
-let ships = {} // maps 0: shipLocations, 1: shipLocations
-let hitsLeft = {}; // maps 0/1: array of ship lives left
-let boards = [];
+const xMap = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
+const EMPTY = '~';
 
 function randInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -70,7 +63,7 @@ function generateBoard() {
   boardRow = [];
   // cols for row
   for(let i = 0; i < 10; i++) {
-    boardRow.push('~');
+    boardRow.push(EMPTY);
   }
 
   // add each row to board
@@ -80,17 +73,7 @@ function generateBoard() {
   return board;
 }
 
-
-function reset() {
-  ships = {0: generateShips(), 1: generateShips()};
-  boards.push(generateBoard());
-  boards.push(generateBoard());
-  gameOver = false;
-  lastTeam = Math.round(Math.random());
-  hitsLeft = {0: shipShapes.slice(), 1: shipShapes.slice()};
-}
-
-function isHit(x, y, board, ships) {
+function isHit(x, y, board, ships, hitsLeft) {
   spot = [x, y]
   let hit = false;
   for(let shipInd in ships) {
@@ -120,7 +103,7 @@ function countSinks(ships) {
 }
 
 function boardToString(board) {
-  s = '~'
+  s = EMPTY
   for(let i=0; i < 10; i++) {
     s += i
   }
@@ -133,8 +116,6 @@ function boardToString(board) {
   return s;
 }
 
-reset();
-
 /**
 * The Battleship Game
 * @param {integer} team the binary team you're on
@@ -146,65 +127,91 @@ reset();
 * @returns {object}
 */
 module.exports = (team=0, x='C', y=5, reset=false, turn=false, state=false, context, callback) => {
-  // turn into integer
-  xInd = xMap.indexOf(x);
+  lib.utils.storage.get('bs', (err, gameInfo) => {
+    if (err) {
+      utils.log.error("error with /bs command", new Error("Accepts error objects"), (err) => {
+        return callback(null, 'An error has occurred with your command');
+      });
+    }
+    if (gameInfo == null) {
+      gameInfo = {};
+    }
+    if (!gameInfo.hasOwnProperty('lastTeam')) {
+      gameInfo['lastTeam'] = Math.round(Math.random());
+    }
+    if (!gameInfo.hasOwnProperty('winner')) {
+      gameInfo['winner'] = 'mystery';
+    }
+    if (!gameInfo.hasOwnProperty('gameOver')) {
+      gameInfo['gameOver'] = false;
+    }
+    if (!gameInfo.hasOwnProperty('ships')) {
+      gameInfo['ships'] = {0: generateShips(), 1: generateShips()};;
+    }
+    if (!gameInfo.hasOwnProperty('hitsLeft')) {
+      gameInfo['hitsLeft'] = {0: shipShapes.slice(), 1: shipShapes.slice()};;
+    }
+    if (!gameInfo.hasOwnProperty('boards')) {
+      gameInfo['boards'] = [];
+      gameInfo['boards'].push(generateBoard());
+      gameInfo['boards'].push(generateBoard());
+    }
+    let lastTeam = gameInfo['lastTeam'];
+    let winner = gameInfo['winner'];
+    let gameOver = gameInfo['gameOver'];
+    let ships = gameInfo['ships'] // maps 0: shipLocations, 1: shipLocations
+    let hitsLeft = gameInfo['hitsLeft']; // maps 0/1: array of ship lives left
+    let boards = gameInfo['boards'];
 
-  if(turn) {
+    // turn into integer
+    xInd = xMap.indexOf(x);
+
     let color = 'Red';
     if(lastTeam == 0) {
       color = 'Blue';
     }
-    return callback(null, {text: `It is ${color}'s turn!`, success: true});
-  } else if(state) {
-    return callback(null, {text: '\n'+boardToString(boards[team]), success: true});
-  } else if(reset && gameOver) {
-    reset();
-    let color = 'Red';
-    if(lastTeam == 0) {
-      color = 'Blue';
-    }
-    tracker({post: true, store: {'name': 'bs', 'info': boards}}, function (err, result) {
-      return callback(null, {text: `Successfully Reset! It is ${color}'s turn!`, success: true});
-    });
-  } else if(gameOver) {
-    return callback(null, {text: `Game already over! The ${winner} team won.\n` + boardToString(boards[team]), success: false})
-  } else if(reset) {
-    return callback(null, {text: "Can't reset: game not over\n" + boardToString(boards[team]), success: false})
-  } else if(lastTeam == team) {
-    let color = 'Red';
-      if(team != 0) {
-        color = 'Blue';
-      }
-    return callback(null, {text: `It is not ${color}'s turn.`, success: false})
-  } else if (boards[team][xInd][y] != '~'){
-    return callback(null, {text: `Location ${x}${y} already marked!\n` + boardToString(boards[team]), success: false});
-  } else {
-    let text = `shot at location ${x}${y}.`;
-    let hit = isHit(xInd,y, boards[team], ships[lastTeam]);
-    let sunkCount = countSinks(hitsLeft[lastTeam]);
-    let color = 'Red';
-    if(team != 0) {
-      color = 'Blue';
-    }
-    lastTeam = team;
-    if(hit) {
-      text += ' It was a hit!';
+
+    if(turn) {
+      return callback(null, {text: `It is ${color}'s turn!`, success: true});
+    } else if(state) {
+      return callback(null, {text: '\n'+boardToString(boards[team]), success: true});
+    } else if(reset && gameOver) {
+      gameInfo = {'lastTeam': lastTeam};
+      lib.utils.storage.set('bs', gameInfo, (err, result) => {
+        return callback(null, {text: `Successfully Reset! It is ${color}'s turn!`, success: true});
+      });
+    } else if(gameOver) {
+      return callback(null, {text: `Game already over! The ${winner} team won.\n` + boardToString(boards[team]), success: false})
+    } else if(reset) {
+      return callback(null, {text: "Can't reset: game not over\n" + boardToString(boards[team]), success: false})
+    } else if(lastTeam == team) {
+      return callback(null, {text: `It is not your turn. It is ${color}'s turn!`, success: false})
+    } else if (boards[team][xInd][y] != EMPTY){
+      return callback(null, {text: `Location ${x}${y} already marked!\n` + boardToString(boards[team]), success: false});
     } else {
-      text += ' It was a miss :('
+      let text = `shot at location ${x}${y}.`;
+      let hit = isHit(xInd,y, boards[team], ships[lastTeam], hitsLeft);
+      let sunkCount = countSinks(hitsLeft[lastTeam]);
+
+      gameInfo['lastTeam'] = team;
+      if(hit) {
+        text += ' It was a hit!';
+      } else {
+        text += ' It was a miss :('
+      }
+
+      text += `\nNumber of ships sunk: ${sunkCount}\n` + boardToString(boards[team]);
+
+      if(sunkCount == 5) {
+        gameInfo['gameOver'] = true;
+        gameInfo['winner'] = color;
+        text += `\nThe ${color} team won!`
+        lib[`${context.service.identifier}.services.scores`]({post: true, team: team, game: 'bs'}, function (err, result) {});
+      }
+
+      lib.utils.storage.set('bs', gameInfo, (err, result) => {
+        return callback(null, {text: text, success: true});
+      });
     }
-
-    text += `\nNumber of ships sunk: ${sunkCount}\n` + boardToString(boards[team]);
-
-    if(sunkCount == 5) {
-      gameOver = true;
-      winner = color;
-      text += `\nThe ${color} team won!`
-      scores(true, {'name': 'bs', 'team': team}, undefined, function (err, result) {});
-    }
-
-    tracker(true, {'name': 'bs', 'info': boards}, undefined, function (err, result) {
-      return callback(null, {text: text, success: true});
-    });
-  }
-
+  })
 };

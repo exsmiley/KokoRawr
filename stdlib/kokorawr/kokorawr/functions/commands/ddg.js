@@ -13,7 +13,7 @@ const lib = require('lib')({token: process.env.STDLIB_TOKEN});
 * @returns {object}
 */
 module.exports = (user, channel, text = '', command = {}, botToken = null, context, callback) => {
-  lib[`${context.service.identifier}.services.team`](user, undefined, function (err, teamr) {
+  lib[`${context.service.identifier}.services.team`]({name: user}, function (err, teamr) {
 
     let color = 'Red';
     if(teamr != 0) {
@@ -27,7 +27,7 @@ In this version of Duck Duck Goose, users simply call the /duck command and will
           text: resp
         });
     } else {
-      lib[`${context.service.identifier}.services.ddg`](teamr, undefined, function(err, result) {
+      lib[`${context.service.identifier}.services.ddg`]({team: teamr}, function(err, result) {
         callback(null, {
           response_type: 'in_channel',
           text: `(Duck Duck Goose) <@${user}>:${color} ` + result

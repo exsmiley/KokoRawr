@@ -1,4 +1,4 @@
-const scores = require('./scores.js');
+const lib = require('lib')({token: process.env.STDLIB_TOKEN});
 
 function randInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -9,15 +9,15 @@ function randInt(min, max) {
 * @param {integer} team the binary team you're on
 * @returns {string}
 */
-module.exports = (team, context, callback) => {
+module.exports = (team=0, context, callback) => {
   let num = randInt(0, 3);
 
   if(num != 0) {
-    scores(true, {'name': 'duck', 'team': team}, undefined, function (err, result) {
+    lib[`${context.service.identifier}.services.scores`]({post: true, team: team, game: 'ddg', pointIndex: 0}, function (err, result) {
       return callback(null, `is a duck!`);
     });
   } else {
-    scores(true, {'name': 'duck', 'team': team, 'diff': -5}, undefined, function (err, result) {
+    lib[`${context.service.identifier}.services.scores`]({post: true, team: team, game: 'ddg', pointIndex: 1}, function (err, result) {
       return callback(null, `is a goose!`);
     });
   }

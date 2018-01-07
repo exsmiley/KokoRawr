@@ -1,41 +1,16 @@
-const tracker = require('./tracker.js');
-const scores = require('./scores.js');
+const lib = require('lib')({token: process.env.STDLIB_TOKEN});
 
 // initialize the board
 let numCols = 7;
 let numRows = 6;
-let board = [];
-let boardRow = [];
-
-// the last team to make a move
-let lastTeam = Math.round(Math.random());
-let gameOver = false;
-
-function resetBoard() {
-  board = [];
-  boardRow = [];
-  // cols for row
-  for(let i = 0; i < numCols; i++) {
-    boardRow.push('~');
-  }
-
-  // add each row to board
-  for(let i = 0; i < numRows; i++) {
-    board.push(boardRow.slice());
-  }
-  lastTeam = Math.round(Math.random());
-  gameOver = false;
-}
-
-resetBoard();
-
+const EMPTY = '~';
 
 // gets the highest unoccupied location for each piece
-function getTopLocation(location) {
+function getTopLocation(board, location) {
   let top = -1;
 
   for(let i = 0; i < numRows; i++) {
-    if(board[i][location-1] == '~') {
+    if(board[i][location-1] == EMPTY) {
       top = i;
     }
   }
@@ -45,7 +20,7 @@ function getTopLocation(location) {
 
 // checks if a team has won the game
 // thanks based ferdelOlmo (https://stackoverflow.com/questions/32770321/connect-4-check-for-a-win-algorithm)
-function checkWin(player) {
+function checkWin(board, player) {
     // horizontalCheck 
     for (let j = 0; j<numCols-3 ; j++ ){
         for (let i = 0; i<numRows; i++){
@@ -82,7 +57,7 @@ function checkWin(player) {
 function checkTie(board) {
   let tie = true;
   for(let i = 0; i < numCols; i++) {
-    if(board[0][i] == '~') {
+    if(board[0][i] == EMPTY) {
       tie = false;
     }
   }
@@ -112,65 +87,98 @@ function boardToText(board) {
 * @returns {object}
 */
 module.exports = (team=0, location=0, reset=false, turn=false, state=false, context, callback) => {
-  let json = {};
-  let top = getTopLocation(location);
+  lib.utils.storage.get('c4', (err, gameInfo) => {
+    if (err) {
+      utils.log.error("error with /c4 command", new Error("Accepts error objects"), (err) => {
+        return callback(null, 'An error has occurred with your command');
+      });
+    }
+    if (gameInfo == null) {
+      gameInfo = {};
+    }
+    if (!gameInfo.hasOwnProperty('board')) {
+      gameInfo['board'] = [];
+      let boardRow = [];
+      // cols for row
+      for(let i = 0; i < 7; i++) {
+        boardRow.push(EMPTY);
+      }
+      // add each row to board
+      for(let i = 0; i < 6; i++) {
+        gameInfo['board'].push(boardRow.slice());
+      }
+    }
+    if (!gameInfo.hasOwnProperty('lastTeam')) {
+      gameInfo['lastTeam'] = Math.round(Math.random());
+    }
+    if (!gameInfo.hasOwnProperty('gameOver')) {
+      gameInfo['gameOver'] = false;
+    }
+    let board = gameInfo['board'];
+    let lastTeam = gameInfo['lastTeam'];
+    let gameOver = gameInfo['gameOver'];
 
-  if(turn) {
+    let json = {};
+    let top = getTopLocation(board, location);
+
     let color = 'Red';
     if(lastTeam == 0) {
       color = 'Blue';
     }
-    callback(null, {text: `It is ${color}'s turn!`, success: true});
-  } else if(state) {
-    callback(null, {text: '\n'+boardToText(board), success: true});
-  } else if(gameOver && reset) {
-    json['success'] = true;
-    resetBoard()
-    json['text'] = 'Successfully reset the game!\n' + boardToText(board)
-    tracker({post: true, store: {'name': 'c4', 'info': board}}, function (err, result) {
-      callback(null, json);
-    });
-  } else if(reset) {
-    json['success'] = false;
-    json['text'] = 'The game cannot be reset: it is not over!\n' + boardToText(board)
-    callback(null, json);
-  } else if(gameOver) {
-    json['success'] = false;
-    json['text'] = 'The game is already over!\n' + boardToText(board)
-    callback(null, json);
-  } else if(team == lastTeam) {
-    json['success'] = false;
-    json['text'] = 'It is not your turn.\n' + boardToText(board)
-    callback(null, json);
-  } else if(top < 0) {
-    json['success'] = false;
-    json['text'] = `No more pieces can be placed at location ${location}.\n` + boardToText(board)
-    callback(null, json);
-  } else {
-    lastTeam = team;
-    json['success'] = true;
-    let symbol = 'R';
-    if(team != 0) {
-      symbol = 'B';
-    }
-    board[top][location-1] = symbol;
-    json['text'] = ` played at location ${location}.\n` + boardToText(board);
 
-    if(checkWin(symbol)) {
-      let teamName = 'Red';
+    if(turn) {
+      callback(null, {text: `It is ${color}'s turn!`, success: true});
+    } else if(state) {
+      callback(null, {text: '\n'+boardToText(board), success: true});
+    } else if(gameOver && reset) {
+      gameInfo = {'lastTeam': lastTeam};
+      json['success'] = true;
+      json['text'] = `Successfully reset the game! It is ${color}'s turn!\n`;
+      lib.utils.storage.set('c4', gameInfo, (err, result) => {
+        callback(null, json);
+      });
+    } else if(reset) {
+      json['success'] = false;
+      json['text'] = 'The game cannot be reset: it is not over!\n' + boardToText(board)
+      callback(null, json);
+    } else if(gameOver) {
+      json['success'] = false;
+      json['text'] = 'The game is already over!\n' + boardToText(board)
+      callback(null, json);
+    } else if(team == lastTeam) {
+      json['success'] = false;
+      json['text'] = `It is not your turn. It is ${color}'s turn!\n` + boardToText(board)
+      callback(null, json);
+    } else if(top < 0) {
+      json['success'] = false;
+      json['text'] = `No more pieces can be placed at location ${location}.\n` + boardToText(board)
+      callback(null, json);
+    } else {
+      gameInfo['lastTeam'] = team;
+      json['success'] = true;
+      let symbol = 'R';
       if(team != 0) {
-        teamName = 'Blue';
+        symbol = 'B';
       }
-      gameOver = true;
-      json['text'] += `\n${teamName} won!`
-      scores(true, {'name': 'c4', 'team': team}, undefined, function (err, result) {});
-    } else if(checkTie(board)) {
-      json['text'] += "\nIt's a tie!";
-      gameOver = true;
-    }
-    tracker(true, {'name': 'c4', 'info': board}, undefined, function (err, result) {
-      callback(null, json);
-    });
-  }
+      gameInfo['board'][top][location-1] = symbol;
+      json['text'] = ` played at location ${location}.\n` + boardToText(board);
 
+      if(checkWin(board, symbol)) {
+        let teamName = 'Red';
+        if(team != 0) {
+          teamName = 'Blue';
+        }
+        gameInfo['gameOver'] = true;
+        json['text'] += `\n${teamName} won!`
+        lib[`${context.service.identifier}.services.scores`]({post: true, team: team, game: 'c4'}, function (err, result) {});
+      } else if(checkTie(board)) {
+        json['text'] += "\nIt's a tie!";
+        gameInfo['gameOver'] = true;
+      }
+      lib.utils.storage.set('c4', gameInfo, (err, result) => {
+        callback(null, json);
+      });
+    }
+  })
+  
 };

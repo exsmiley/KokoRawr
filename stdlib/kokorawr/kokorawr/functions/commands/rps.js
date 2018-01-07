@@ -13,14 +13,6 @@ const lib = require('lib')({token: process.env.STDLIB_TOKEN});
 * @returns {object}
 */
 module.exports = (user, channel, text = '', command = {}, botToken = null, context, callback) => {
-  if(text[0] == 'r') {
-    text = 'rock';
-  } else if(text[0] == 'p') {
-    text = 'paper';
-  } else if(text[0] == 's'){
-    text = 'scissors'
-  }
-
   if(text.includes('help')) {
     let resp = `(Rock Paper Scissors) <@${user}>:${color} thanks for asking for help!
 In this version of Rock Paper Scissors, users call the /rps command followed by one of rock, paper, and scissors. Once the user is paired with another, the duel begins. In this duel paper beats rock, scissors beats paper, and rock beats scissors. If the same tool is picked by both users, then it is a draw.`
@@ -29,8 +21,8 @@ In this version of Rock Paper Scissors, users call the /rps command followed by 
           text: resp
         });
   } else {
-    lib[`${context.service.identifier}.services.team`](user, undefined, function (err, teamr) {
-      lib[`${context.service.identifier}.services.rps`](user, teamr, text, undefined, function(err, result) {
+    lib[`${context.service.identifier}.services.team`]({name: user}, function (err, teamr) {
+      lib[`${context.service.identifier}.services.rps`]({user: user, team: teamr, option: text}, function(err, result) {
         callback(null, {
           response_type: 'in_channel',
           text: `(Rock Paper Scissors) ` + result

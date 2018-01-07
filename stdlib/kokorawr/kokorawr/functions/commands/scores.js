@@ -14,7 +14,7 @@ const lib = require('lib')({token: process.env.STDLIB_TOKEN});
 */
 module.exports = (user, channel, text = '', command = {}, botToken = null, context, callback) => {
   let resp = `Hi <@${user}>! Here are the current scores:`;
-  lib[`${context.service.identifier}.services.scores`](false, undefined, undefined, function (err, result) {
+  lib[`${context.service.identifier}.services.scores`]({post: false}, function (err, result) {
     if(!result.hasOwnProperty('ttt')) {
       result['ttt'] = [0, 0]
     }
@@ -24,23 +24,23 @@ module.exports = (user, channel, text = '', command = {}, botToken = null, conte
     if(!result.hasOwnProperty('bs')) {
       result['bs'] = [0, 0]
     }
-    if(!result.hasOwnProperty('duck')) {
-      result['duck'] = [0, 0]
+    if(!result.hasOwnProperty('ddg')) {
+      result['ddg'] = [0, 0]
     }
     if(!result.hasOwnProperty('rps')) {
       result['rps'] = [0, 0]
     }
-    if(!result.hasOwnProperty('mind')) {
-      result['mind'] = [0, 0]
+    if(!result.hasOwnProperty('mm')) {
+      result['mm'] = [0, 0]
     }
 
     resp += `
 Tic Tac Toe: Red(${result['ttt'][0]}) Blue(${result['ttt'][1]})
 Connect 4: Red(${result['c4'][0]}) Blue(${result['c4'][1]})
 Battleship: Red(${result['bs'][0]}) Blue(${result['bs'][1]})
-Duck Duck Goose: Red(${result['duck'][0]}) Blue(${result['duck'][1]})
+Duck Duck Goose: Red(${result['ddg'][0]}) Blue(${result['ddg'][1]})
 Rock Paper Scissors: Red(${result['rps'][0]}) Blue(${result['rps'][1]})
-Mastermind: Red(${result['mind'][0]}) Blue(${result['mind'][1]})`
+Mastermind: Red(${result['mm'][0]}) Blue(${result['mm'][1]})`
 
     let scoreRed = 0;
     let scoreBlue = 0;
