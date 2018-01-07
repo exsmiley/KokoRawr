@@ -166,20 +166,17 @@ module.exports = (team=0, x='C', y=5, reset=false, turn=false, state=false, cont
     // turn into integer
     xInd = xMap.indexOf(x);
 
+    let color = 'Red';
+    if(lastTeam == 0) {
+      color = 'Blue';
+    }
+
     if(turn) {
-      let color = 'Red';
-      if(lastTeam == 0) {
-        color = 'Blue';
-      }
       return callback(null, {text: `It is ${color}'s turn!`, success: true});
     } else if(state) {
       return callback(null, {text: '\n'+boardToString(boards[team]), success: true});
     } else if(reset && gameOver) {
-      gameInfo = {};
-      let color = 'Red';
-      if(lastTeam == 0) {
-        color = 'Blue';
-      }
+      gameInfo = {'lastTeam': lastTeam};
       lib.utils.storage.set('bs', gameInfo, (err, result) => {
         return callback(null, {text: `Successfully Reset! It is ${color}'s turn!`, success: true});
       });
@@ -188,21 +185,14 @@ module.exports = (team=0, x='C', y=5, reset=false, turn=false, state=false, cont
     } else if(reset) {
       return callback(null, {text: "Can't reset: game not over\n" + boardToString(boards[team]), success: false})
     } else if(lastTeam == team) {
-      let color = 'Red';
-        if(team != 0) {
-          color = 'Blue';
-        }
-      return callback(null, {text: `It is not ${color}'s turn.`, success: false})
+      return callback(null, {text: `It is not your turn. It is ${color}'s turn!`, success: false})
     } else if (boards[team][xInd][y] != EMPTY){
       return callback(null, {text: `Location ${x}${y} already marked!\n` + boardToString(boards[team]), success: false});
     } else {
       let text = `shot at location ${x}${y}.`;
       let hit = isHit(xInd,y, boards[team], ships[lastTeam], hitsLeft);
       let sunkCount = countSinks(hitsLeft[lastTeam]);
-      let color = 'Red';
-      if(team != 0) {
-        color = 'Blue';
-      }
+
       gameInfo['lastTeam'] = team;
       if(hit) {
         text += ' It was a hit!';

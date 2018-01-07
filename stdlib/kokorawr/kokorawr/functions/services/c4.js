@@ -121,18 +121,19 @@ module.exports = (team=0, location=0, reset=false, turn=false, state=false, cont
     let json = {};
     let top = getTopLocation(board, location);
 
+    let color = 'Red';
+    if(lastTeam == 0) {
+      color = 'Blue';
+    }
+
     if(turn) {
-      let color = 'Red';
-      if(lastTeam == 0) {
-        color = 'Blue';
-      }
       callback(null, {text: `It is ${color}'s turn!`, success: true});
     } else if(state) {
       callback(null, {text: '\n'+boardToText(board), success: true});
     } else if(gameOver && reset) {
+      gameInfo = {'lastTeam': lastTeam};
       json['success'] = true;
-      gameInfo = {};
-      json['text'] = 'Successfully reset the game!\n' + boardToText(board);
+      json['text'] = `Successfully reset the game! It is ${color}'s turn!\n`;
       lib.utils.storage.set('c4', gameInfo, (err, result) => {
         callback(null, json);
       });
@@ -146,7 +147,7 @@ module.exports = (team=0, location=0, reset=false, turn=false, state=false, cont
       callback(null, json);
     } else if(team == lastTeam) {
       json['success'] = false;
-      json['text'] = 'It is not your turn.\n' + boardToText(board)
+      json['text'] = `It is not your turn. It is ${color}'s turn!\n` + boardToText(board)
       callback(null, json);
     } else if(top < 0) {
       json['success'] = false;

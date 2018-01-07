@@ -63,20 +63,17 @@ module.exports = (team=0, loc=0, reset=false, turn=false, state=false, context, 
 		let gameOver = gameInfo['gameOver'];
 		let lastTeam = gameInfo['lastTeam'];
 
+		let color = 'Red';
+	    if(lastTeam == 0) {
+	      color = 'Blue';
+	    }
+
 		if(turn) {
-		    let color = 'Red';
-		    if(lastTeam == 0) {
-		      color = 'Blue';
-		    }
 		    return callback(null, {text: `It is ${color}'s turn!`, success: true});
 	  	} else if(state) {
 	  		return callback(null, {text: '\n'+markedToBoard(marked), success: true});
 	  	} else if(reset && gameOver) {
-			gameInfo = {};
-			let color = 'Red';
-		    if(lastTeam == 0) {
-		      color = 'Blue';
-		    }
+			gameInfo = {'lastTeam': lastTeam};
 		    lib.utils.storage.set('ttt', gameInfo, (err, result) => {
 		    	return callback(null, {text: `Successfully Reset! It is ${color}'s turn!`, success: true});
 		    });
@@ -85,11 +82,7 @@ module.exports = (team=0, loc=0, reset=false, turn=false, state=false, context, 
 		} else if(reset) {
 			return callback(null, {text: "Can't reset: game not over\n" + markedToBoard(marked), success: false})
 		} else if(lastTeam == team) {
-			let color = 'Red';
-		    if(team != 0) {
-		      color = 'Blue';
-		    }
-			return callback(null, {text: `It is not ${color}'s turn.`, success: false})
+			return callback(null, {text: `It is not your turn. It is ${color}'s turn!`, success: false})
 		} else if (marked[loc-1] != EMPTY){
 			return callback(null, {text: `Location ${loc} already marked!\n` + markedToBoard(marked), success: false});
 		} else {
@@ -98,16 +91,11 @@ module.exports = (team=0, loc=0, reset=false, turn=false, state=false, context, 
 
 			let winLoc = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], [2, 5, 8], [0, 4, 8], [2, 4, 6]];
 
-			for(loca in winLoc) {
-				if (gameInfo['marked'][loca[0]] == gameInfo['marked'][loca[1]] && gameInfo['marked'][loca[1]] == gameInfo['marked'][loca[2]] && gameInfo['marked'][1] != EMPTY) {
+			for(loca of winLoc) {
+				if (gameInfo['marked'][loca[0]] == gameInfo['marked'][loca[1]] && gameInfo['marked'][loca[1]] == gameInfo['marked'][loca[2]] && gameInfo['marked'][loca[1]] != EMPTY) {
 					gameInfo['gameOver'] = true;
 				}
 			}
-
-			let color = 'Red';
-		    if(team != 0) {
-		      color = 'Blue';
-		    }
 
 		    let text = `played at location: ${loc}\n` + markedToBoard(gameInfo['marked']);
 		    if(gameInfo['gameOver']) {

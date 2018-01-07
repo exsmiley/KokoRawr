@@ -53,7 +53,7 @@ module.exports = (user='bob', team=0, guess='', context, callback) => {
         return callback(null, 'An error has occurred with your command');
       });
     }
-    if (gameInfo == null) {
+    if (gameInfo == null || gameInfo == 0) {
       gameInfo = {};
     }
     if (!gameInfo.hasOwnProperty('storedUser')) {
@@ -79,7 +79,7 @@ module.exports = (user='bob', team=0, guess='', context, callback) => {
       let pegs = calculateStats(guess, storedNumber);
       if(pegs[1] == 4) {
         // won the game
-        gameInfo = {};
+        gameInfo = 0;
         lib.utils.storage.set('mm', gameInfo, (err, result) => {
           lib[`${context.service.identifier}.services.scores`]({post: true, team: team, game: 'mm'}, function (err, result) {
             return callback(null, `correctly guessed the number ${guess}`);
